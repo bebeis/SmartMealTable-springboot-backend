@@ -15,6 +15,7 @@ public class MemberPassword {
 
     private final static int MAX_FAILED_COUNT = 5;
     private final static long TTL = 1209_604; // 2 weeks
+
     private String password_hash;
 
     private int failedCount;
@@ -24,11 +25,30 @@ public class MemberPassword {
     private long ttl;
 
     @Builder
-    public MemberPassword(String rawPassword) {
-        this.password_hash = rawPassword;
+    public MemberPassword(String rawPassword) throws PasswordPolicyException {
+        checkPasswordPolicy(rawPassword);
+        this.password_hash = encodePassword(rawPassword);
         this.expirationDate = LocalDateTime.now().plusSeconds(TTL);
         this.ttl = TTL; // 2 weeks
         this.failedCount = 0;
+    }
+
+    public void checkPasswordPolicy(String rawPassword) throws PasswordPolicyException {
+        if (rawPassword.contains(" ")) {
+            throw new PasswordPolicyException("비밀번호는 공백을 포함할 수 없습니다");
+        }
+
+        if (rawPassword.length() < 8) {
+            throw new PasswordPolicyException("비밀번호는 8자 이상이어야 합니다.");
+        }
+
+        if (rawPassword.length() > 20) {
+            throw new PasswordPolicyException("비밀번호는 최대 20자까지 가능합니다.");
+        }
+
+        if (!rawPassword.matches("^[A-Za-z0-9]+$")) {
+            throw new PasswordPolicyException("비밀번호는 영문자(A–Z, a–z)와 숫자(0–9)로만 구성되어야 합니다.");
+        }
     }
 
     public boolean isMatched(final String rawPassword) throws PasswordFailedExceededException {
