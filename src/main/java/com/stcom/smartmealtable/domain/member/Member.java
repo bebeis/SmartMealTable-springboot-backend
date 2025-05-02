@@ -24,7 +24,8 @@ public class Member extends BaseEntity {
 
     private boolean isEmailVerified;
 
-    public void changePassword(String rawOldPassword, String rawNewPassword) {
+    public void changePassword(String rawOldPassword, String rawNewPassword)
+            throws PasswordFailedExceededException, PasswordPolicyException {
         if (rawOldPassword.isBlank() || rawNewPassword.isBlank()) {
             throw new IllegalArgumentException("빈 비밀번호를 입력했습니다");
         }

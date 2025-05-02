@@ -81,11 +81,17 @@ public class MemberPassword {
         failedCount++;
     }
 
-    public void changePassword(final String newPassword, final String oldPassword) {
-        if (isMatches(oldPassword)) {
-            password_hash = encodePassword(newPassword);
-            extendExpirationDate();
+    public void changePassword(final String newPassword, final String oldPassword)
+            throws PasswordFailedExceededException, PasswordPolicyException {
+        if (!isMatches(oldPassword)) {
+            throw new PasswordFailedExceededException("기존 비밀번호가 일치하지 않습니다");
         }
+        if (newPassword.equals(oldPassword)) {
+            throw new PasswordPolicyException("기존 비밀번호와 새 비밀번호가 동일합니다. 기존 비밀번호와 동일하지 않은 비밀번호로 설정해주세요");
+        }
+        checkPasswordPolicy(newPassword);
+        password_hash = encodePassword(newPassword);
+        extendExpirationDate();
     }
 
     private void extendExpirationDate() {
