@@ -1,19 +1,19 @@
 package com.stcom.smartmealtable.domain.member;
 
 import com.stcom.smartmealtable.common.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 
 @Entity
-@Table(name = "MEMBER_AUTH")
-public class Member extends BaseEntity {
+public class MemberAuth extends BaseEntity {
 
     @Id
     @GeneratedValue
+    @Column(name = "member_id")
     private Long id;
 
     @Email
@@ -34,5 +34,9 @@ public class Member extends BaseEntity {
 
     public boolean isMatchedPassword(final String rawPassword) throws PasswordFailedExceededException {
         return password.isMatched(rawPassword);
+    }
+
+    public boolean isEmailVerified() {
+        return isEmailVerified;
     }
 }
