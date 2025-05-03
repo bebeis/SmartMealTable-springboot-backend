@@ -6,6 +6,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 
 @Entity
@@ -23,6 +24,9 @@ public class MemberAuth extends BaseEntity {
     private MemberPassword password;
 
     private boolean isEmailVerified;
+
+    @OneToOne(mappedBy = "memberAuth")
+    private MemberProfile memberProfile;
 
     public void changePassword(String rawOldPassword, String rawNewPassword)
             throws PasswordFailedExceededException, PasswordPolicyException {
