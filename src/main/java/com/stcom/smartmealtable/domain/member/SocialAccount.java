@@ -1,17 +1,22 @@
 package com.stcom.smartmealtable.domain.member;
 
-import com.stcom.smartmealtable.common.BaseEntity;
+import com.stcom.smartmealtable.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
-public class SocialAccount extends BaseEntity {
+@NoArgsConstructor
+public class SocialAccount extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -22,6 +27,7 @@ public class SocialAccount extends BaseEntity {
     @JoinColumn(name = "member_id")
     private MemberAuth memberAuth;
 
+    @Enumerated(EnumType.STRING)
     private SocialLoginProvider provider;
 
     private String providerUserId;
@@ -31,4 +37,21 @@ public class SocialAccount extends BaseEntity {
     private String refreshToken;
 
     private LocalDateTime tokenExpiresAt;
+
+    @Builder
+    public SocialAccount(MemberAuth memberAuth, SocialLoginProvider provider, String providerUserId,
+                         String accessToken, String refreshToken, LocalDateTime tokenExpiresAt) {
+        this.memberAuth = memberAuth;
+        this.provider = provider;
+        this.providerUserId = providerUserId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.tokenExpiresAt = tokenExpiresAt;
+    }
+
+    public void updateToken(String accessToken, String refreshToken, LocalDateTime tokenExpiresAt) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.tokenExpiresAt = tokenExpiresAt;
+    }
 }
