@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Embeddable
@@ -24,7 +23,6 @@ public class MemberPassword {
 
     private long ttl;
 
-    @Builder
     public MemberPassword(String rawPassword) throws PasswordPolicyException {
         checkPasswordPolicy(rawPassword);
         this.password_hash = encodePassword(rawPassword);
