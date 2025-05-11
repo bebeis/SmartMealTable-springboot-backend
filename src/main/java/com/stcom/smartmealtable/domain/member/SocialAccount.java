@@ -20,7 +20,7 @@ public class SocialAccount extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "social_id")
+    @Column(name = "social_account_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

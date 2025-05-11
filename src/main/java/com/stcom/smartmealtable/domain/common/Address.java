@@ -1,5 +1,6 @@
 package com.stcom.smartmealtable.domain.common;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,6 +15,7 @@ public class Address {
 
     @Id
     @GeneratedValue
+    @Column(name = "address_id")
     private Long id;
 
     private String lotNumberAddress;
