@@ -36,18 +36,29 @@ public abstract class Budget extends BaseTimeEntity {
 
     private BigDecimal limit;
 
-    private BigDecimal availableAmount;
-
-    protected Budget(MemberAuth memberAuth) {
+    protected Budget(MemberAuth memberAuth, BigDecimal limit) {
         this.memberAuth = memberAuth;
+        this.limit = limit;
     }
 
     public void addSpent(BigDecimal amount) {
         this.spendAmount = spendAmount.add(amount);
     }
 
+    public void addSpent(int amount) {
+        this.spendAmount = spendAmount.add(BigDecimal.valueOf(amount));
+    }
+
+    public void addSpent(double amount) {
+        this.spendAmount = spendAmount.add(BigDecimal.valueOf(amount));
+    }
+
     public void resetSpent() {
         this.spendAmount = BigDecimal.ZERO;
+    }
+
+    public BigDecimal getAvailableAmount() {
+        return limit.subtract(spendAmount);
     }
 
     public boolean isOverLimit() {
