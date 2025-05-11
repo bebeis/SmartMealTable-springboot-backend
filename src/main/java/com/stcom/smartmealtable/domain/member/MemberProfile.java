@@ -22,7 +22,7 @@ public class MemberProfile extends BaseTimeEntity {
     private Long id;
 
     @OneToOne(mappedBy = "memberProfile")
-    private MemberAuth memberAuth;
+    private Member member;
 
     private String fullName;
 
@@ -30,8 +30,8 @@ public class MemberProfile extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private List<Address> addressHistory = new ArrayList<>();
 
-    protected void linkMemberAuth(MemberAuth memberAuth) {
-        this.memberAuth = memberAuth;
+    protected void linkMemberAuth(Member member) {
+        this.member = member;
     }
 
     public void changeFullName(String newName) {

@@ -1,6 +1,6 @@
 package com.stcom.smartmealtable.domain.Budget;
 
-import com.stcom.smartmealtable.domain.member.MemberAuth;
+import com.stcom.smartmealtable.domain.member.Member;
 import jakarta.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DailyBudget extends Budget {
 
-    public DailyBudget(MemberAuth memberAuth, BigDecimal limit,
+    public DailyBudget(Member member, BigDecimal limit,
                        LocalDate date) {
-        super(memberAuth, limit);
+        super(member, limit);
         this.date = date;
     }
 

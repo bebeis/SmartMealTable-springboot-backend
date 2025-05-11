@@ -25,7 +25,7 @@ public class SocialAccount extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private MemberAuth memberAuth;
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     private SocialLoginProvider provider;
@@ -39,9 +39,9 @@ public class SocialAccount extends BaseTimeEntity {
     private LocalDateTime tokenExpiresAt;
 
     @Builder
-    public SocialAccount(MemberAuth memberAuth, SocialLoginProvider provider, String providerUserId,
+    public SocialAccount(Member member, SocialLoginProvider provider, String providerUserId,
                          String accessToken, String refreshToken, LocalDateTime tokenExpiresAt) {
-        this.memberAuth = memberAuth;
+        this.member = member;
         this.provider = provider;
         this.providerUserId = providerUserId;
         this.accessToken = accessToken;

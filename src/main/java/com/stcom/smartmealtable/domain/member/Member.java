@@ -9,13 +9,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class MemberAuth extends BaseTimeEntity {
+@Table(name = "member_auth")
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -36,7 +38,7 @@ public class MemberAuth extends BaseTimeEntity {
     private MemberProfile memberProfile;
 
     @Builder
-    public MemberAuth(String email, String rawPassword) throws PasswordPolicyException {
+    public Member(String email, String rawPassword) throws PasswordPolicyException {
         this.email = email;
         this.password = new MemberPassword(rawPassword);
     }
