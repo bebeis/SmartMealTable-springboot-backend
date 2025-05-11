@@ -13,8 +13,12 @@ class MemberPasswordTest {
     void 비밀번호_정책_성공() throws Exception {
         String successRawPassword = "abcdefg123";
         assertDoesNotThrow(() ->
-                MemberPassword.builder().rawPassword(successRawPassword).build()
+                createPassword(successRawPassword)
         );
+    }
+
+    private MemberPassword createPassword(String rawPassword) throws PasswordPolicyException {
+        return new MemberPassword(rawPassword);
     }
 
     @Test
@@ -26,7 +30,7 @@ class MemberPasswordTest {
 
     private void checkFailedCase(String failedRawPassword) {
         assertThrows(PasswordPolicyException.class, () ->
-                MemberPassword.builder().rawPassword(failedRawPassword).build()
+                createPassword(failedRawPassword)
         );
     }
 
@@ -52,19 +56,14 @@ class MemberPasswordTest {
     @Test
     void 비밀번호_일치() throws Exception {
         // given
-        MemberPassword newPassword = MemberPassword.builder()
-                .rawPassword("abcdefg1234")
-                .build();
+        MemberPassword newPassword = createPassword("abcdefg1234");
         // then
-        assertThat(newPassword.isMatched("abcdefg1234"));
+        assertThat(newPassword.isMatched("abcdefg1234")).isTrue();
     }
 
     @Test
     void 비밀번호_변경_실패_이전비밀번호_불일치() throws Exception {
-        MemberPassword oldPassword
-                = MemberPassword.builder()
-                .rawPassword("abcdefg1234")
-                .build();
+        MemberPassword oldPassword = createPassword("abcdefg1234");
 
         assertThrows(PasswordFailedExceededException.class,
                 () -> oldPassword.changePassword("abcdccc1234", "abcdefg123")); // 실패해야 함.)
@@ -72,10 +71,7 @@ class MemberPasswordTest {
 
     @Test
     void 비밀번호_변경_실패_새비밀번호_정책실패() throws Exception {
-        MemberPassword oldPassword
-                = MemberPassword.builder()
-                .rawPassword("abcdefg1234")
-                .build();
+        MemberPassword oldPassword = createPassword("abcdefg1234");
 
         assertThrows(PasswordPolicyException.class,
                 () -> oldPassword.changePassword("abcde", "abcdefg1234")); // 실패해야 함.)
@@ -83,10 +79,7 @@ class MemberPasswordTest {
 
     @Test
     void 비밀번호_변경_실패_새비밀번호_기존과동일() throws Exception {
-        MemberPassword oldPassword
-                = MemberPassword.builder()
-                .rawPassword("abcdefg1234")
-                .build();
+        MemberPassword oldPassword = createPassword("abcdefg1234");
 
         assertThrows(PasswordPolicyException.class,
                 () -> oldPassword.changePassword("abcdefg1234", "abcdefg1234")); // 실패해야 함.)
@@ -95,10 +88,7 @@ class MemberPasswordTest {
 
     @Test
     void 비밀번호_변경_성공() throws Exception {
-        MemberPassword password
-                = MemberPassword.builder()
-                .rawPassword("abcdefg1234")
-                .build();
+        MemberPassword password = new MemberPassword("abcdefg1234");
 
         assertDoesNotThrow(
                 () -> password.changePassword("aaabcd1234", "abcdefg1234")); // 실패해야 함.)
