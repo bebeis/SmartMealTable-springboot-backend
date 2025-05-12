@@ -1,10 +1,9 @@
-package com.stcom.smartmealtable.domain.member;
+package com.stcom.smartmealtable.domain.social;
 
 import com.stcom.smartmealtable.common.BaseTimeEntity;
+import com.stcom.smartmealtable.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,8 +26,7 @@ public class SocialAccount extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private SocialLoginProvider provider;
+    private String provider;
 
     private String providerUserId;
 
@@ -39,7 +37,7 @@ public class SocialAccount extends BaseTimeEntity {
     private LocalDateTime tokenExpiresAt;
 
     @Builder
-    public SocialAccount(Member member, SocialLoginProvider provider, String providerUserId,
+    public SocialAccount(Member member, String provider, String providerUserId,
                          String accessToken, String refreshToken, LocalDateTime tokenExpiresAt) {
         this.member = member;
         this.provider = provider;
