@@ -1,27 +1,56 @@
 package com.stcom.smartmealtable.web.auth.social;
 
+import static com.stcom.smartmealtable.web.auth.social.SocialConst.KAKAO;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.stcom.smartmealtable.web.dto.token.TokenDto;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodySpec;
 import org.springframework.web.client.RestClient.ResponseSpec;
 
+@Component
+@Slf4j
 public class KakaoHttpMessage implements SocialHttpMessage {
+
+    @Value("${kakao.oauth.client-id}")
+    private String clientId;
+
+    @Value("${kakao.oauth.redirect-uri}")
+    private String redirectUri;
 
     @Override
     public RequestBodySpec getRequestMessage(RestClient client, String code) {
         return client.post()
-                .uri(uriBuilder -> uriBuilder.path("https://kauth.kakao.com/oauth/token").build())
-                .headers(httpHeaders -> httpHeaders.setContentType(MediaType.APPLICATION_JSON))
-                .body(new KakaoTokenRequest(code));
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("https")
+                        .host("kauth.kakao.com")
+                        .path("/oauth/token")
+                        .build())
+                // form data 로 보내려면 반드시 URL_ENCODED
+                .headers(h -> h.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .body(createFormData(code));
     }
+
+    private MultiValueMap<String, String> createFormData(String code) {
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "authorization_code");
+        formData.add("client_id", clientId);
+        formData.add("redirect_uri", redirectUri);
+        formData.add("code", code);
+        log.info("client Id = {}", clientId);
+        return formData;
+    }
+
 
     @Override
     public TokenDto getTokenResponse(ResponseSpec responseSpec) {
@@ -31,10 +60,9 @@ public class KakaoHttpMessage implements SocialHttpMessage {
                 .refreshToken(tokenResponse.getRefreshToken())
                 .expiresIn(tokenResponse.getExpiresIn())
                 .tokenType(tokenResponse.getTokenType())
-                .provider("Kakao")
+                .provider(KAKAO)
                 .providerUserId(extractProviderUserId(tokenResponse.getIdToken()))
                 .build();
-
     }
 
     @Override
@@ -64,28 +92,28 @@ public class KakaoHttpMessage implements SocialHttpMessage {
         }
     }
 
-    @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    static class KakaoTokenRequest {
-
-        public KakaoTokenRequest(String code) {
-            this.code = code;
-        }
-
-        @NotBlank
-        private String grantType = "authorization_code";
-
-        @NotBlank
-        @Value("${kakao.oauth.client-id}")
-        private String clientId;
-
-        @NotBlank
-        @Value("${kakao.oauth.redirect-uri}")
-        private String redirectUri;
-
-        @NotBlank
-        private String code;
-    }
+//    @Data
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    static class KakaoTokenRequest {
+//
+//        public KakaoTokenRequest(String code) {
+//            this.code = code;
+//        }
+//
+//        @NotBlank
+//        private String grantType = "authorization_code";
+//
+//        @NotBlank
+//        @Value("${kakao.oauth.client-id}")
+//        private String clientId;
+//
+//        @NotBlank
+//        @Value("${kakao.oauth.redirect-uri}")
+//        private String redirectUri;
+//
+//        @NotBlank
+//        private String code;
+//    }
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
