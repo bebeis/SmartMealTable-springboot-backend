@@ -1,4 +1,4 @@
-package com.stcom.smartmealtable.web.social;
+package com.stcom.smartmealtable.web.auth.social;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodySpec;
 import org.springframework.web.client.RestClient.ResponseSpec;
 
-public class Kakao implements Social {
+public class KakaoHttpMessage implements SocialHttpMessage {
 
     @Override
     public RequestBodySpec getRequestMessage(RestClient client, String code) {

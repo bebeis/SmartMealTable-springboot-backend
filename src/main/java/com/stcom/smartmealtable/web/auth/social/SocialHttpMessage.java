@@ -1,11 +1,11 @@
-package com.stcom.smartmealtable.web.social;
+package com.stcom.smartmealtable.web.auth.social;
 
 import com.stcom.smartmealtable.web.dto.token.TokenDto;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodySpec;
 import org.springframework.web.client.RestClient.ResponseSpec;
 
-public interface Social {
+public interface SocialHttpMessage {
 
     RequestBodySpec getRequestMessage(RestClient client, String code);
 

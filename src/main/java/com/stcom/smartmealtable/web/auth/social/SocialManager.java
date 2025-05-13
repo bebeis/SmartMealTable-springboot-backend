@@ -1,4 +1,4 @@
-package com.stcom.smartmealtable.web.social;
+package com.stcom.smartmealtable.web.auth.social;
 
 import com.stcom.smartmealtable.web.dto.token.TokenDto;
 import java.util.HashMap;
@@ -11,10 +11,10 @@ import org.springframework.web.client.RestClient.ResponseSpec;
 @Component
 public class SocialManager {
 
-    private final Map<String, Social> socialMap = new HashMap<>();
+    private final Map<String, SocialHttpMessage> socialMap = new HashMap<>();
 
     public SocialManager() {
-        socialMap.put("Kakao", new Kakao());
+        socialMap.put("Kakao", new KakaoHttpMessage());
     }
 
     public RequestBodySpec getTokenRequestMessage(RestClient client, String provider, String code) {
