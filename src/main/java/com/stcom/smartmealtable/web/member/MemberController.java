@@ -35,12 +35,8 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtTokenService jwtTokenService;
 
-    @GetMapping("/members/email/check")
-    public ResponseEntity<ApiResponse<?>> checkEmail(@Email @RequestParam String email, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(ApiResponse.createFail(bindingResult));
-        }
+    @GetMapping("/email/check")
+    public ResponseEntity<ApiResponse<?>> checkEmail(@Email @RequestParam String email) {
         if (memberService.isEmailExists(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.createError("이미 존재하는 이메일입니다."));
         }
