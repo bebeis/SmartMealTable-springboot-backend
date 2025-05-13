@@ -3,7 +3,7 @@ package com.stcom.smartmealtable.web.auth;
 
 import com.stcom.smartmealtable.domain.social.SocialAccountService;
 import com.stcom.smartmealtable.security.JwtTokenService;
-import com.stcom.smartmealtable.web.auth.social.SocialManager;
+import com.stcom.smartmealtable.web.auth.social.SocialHttpMessageManager;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import com.stcom.smartmealtable.web.dto.token.JwtTokenResponseDto;
 import com.stcom.smartmealtable.web.dto.token.TokenDto;
@@ -25,7 +25,7 @@ import org.springframework.web.client.RestClient.RequestBodySpec;
 @RequiredArgsConstructor
 public class OAuth2Controller {
 
-    private final SocialManager socialManager;
+    private final SocialHttpMessageManager socialManager;
     private final RestClient client = RestClient.create();
     private final SocialAccountService socialAccountService;
     private final JwtTokenService jwtTokenService;

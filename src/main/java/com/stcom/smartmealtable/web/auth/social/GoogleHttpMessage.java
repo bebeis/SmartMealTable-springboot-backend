@@ -1,12 +1,14 @@
 package com.stcom.smartmealtable.web.auth.social;
 
-import static com.stcom.smartmealtable.web.auth.social.SocialConst.KAKAO;
+import static com.stcom.smartmealtable.web.auth.social.SocialConst.GOOGLE;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.stcom.smartmealtable.web.dto.token.TokenDto;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,21 +22,25 @@ import org.springframework.web.client.RestClient.ResponseSpec;
 
 @Component
 @Slf4j
-public class KakaoHttpMessage implements SocialHttpMessage {
+public class GoogleHttpMessage implements SocialHttpMessage {
 
-    @Value("${kakao.oauth.client-id}")
+    @Value("${google.oauth.client-id}")
     private String clientId;
 
-    @Value("${kakao.oauth.redirect-uri}")
+    @Value("${google.oauth.client-secret}")
+    private String clientSecret;
+
+    @Value("${google.oauth.redirect-uri}")
     private String redirectUri;
+
 
     @Override
     public RequestBodySpec getRequestMessage(RestClient client, String code) {
         return client.post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
-                        .host("kauth.kakao.com")
-                        .path("/oauth/token")
+                        .host("oauth2.googleapis.com")
+                        .path("/token")
                         .build())
                 // form data 로 보내려면 반드시 URL_ENCODED
                 .headers(h -> h.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
@@ -44,68 +50,59 @@ public class KakaoHttpMessage implements SocialHttpMessage {
     private MultiValueMap<String, String> createFormData(String code) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "authorization_code");
-        formData.add("client_id", clientId);
-        formData.add("redirect_uri", redirectUri);
         formData.add("code", code);
+        formData.add("redirect_uri", redirectUri);
+        formData.add("client_id", clientId);
+        formData.add("client_secret", clientSecret);
         log.info("client Id = {}", clientId);
         return formData;
     }
 
-
     @Override
     public TokenDto getTokenResponse(ResponseSpec responseSpec) {
-        KakaoTokenResponse tokenResponse = responseSpec.body(KakaoTokenResponse.class);
+        GoogleTokenResponse tokenResponse = responseSpec.body(GoogleTokenResponse.class);
         return TokenDto.builder()
                 .accessToken(tokenResponse.getAccessToken())
                 .refreshToken(tokenResponse.getRefreshToken())
                 .expiresIn(tokenResponse.getExpiresIn())
                 .tokenType(tokenResponse.getTokenType())
-                .provider(KAKAO)
+                .provider(GOOGLE)
                 .providerUserId(extractProviderUserId(tokenResponse.getIdToken()))
                 .build();
     }
 
+
     @Override
     public String extractProviderUserId(String idToken) {
-        if (idToken == null || idToken.isEmpty()) {
+        if (idToken == null || idToken.isBlank()) {
             return null;
         }
-
         try {
             String[] jwtParts = idToken.split("\\.");
             if (jwtParts.length != 3) {
                 return null;
             }
 
-            String payload = new String(java.util.Base64.getUrlDecoder().decode(jwtParts[1]));
+            String payload = new String(Base64.getUrlDecoder().decode(jwtParts[1]), StandardCharsets.UTF_8);
+            JsonNode payloadJson = new ObjectMapper().readTree(payload);
+            return payloadJson.path("sub").asText(null);
 
-            // Jackson ObjectMapper를 사용하여 JSON 파싱
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode payloadJson = mapper.readTree(payload);
-
-            return payloadJson.has("sub") ? payloadJson.get("sub").asText() : null;
         } catch (Exception e) {
-            // 예외 발생 시 로깅 및 null 반환
-            System.err.println("카카오 ID 토큰 파싱 오류: " + e.getMessage());
+            // 로깅: 어떤 공급자(token issuer)에 대한 토큰인지 같이 찍어도 좋습니다.
+            log.error("ID 토큰 파싱 오류: {}", e.getMessage());
             return null;
         }
     }
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    static class KakaoTokenResponse {
-
-        private String tokenType;
+    static class GoogleTokenResponse {
 
         private String accessToken;
-
-        private String idToken;
-
         private Integer expiresIn;
-
         private String refreshToken;
-
-        private Integer refreshTokenExpiresIn;
-
+        private String scope;
+        private String tokenType;
+        private String idToken;
     }
 }

@@ -1,5 +1,6 @@
 package com.stcom.smartmealtable.web.auth.social;
 
+import static com.stcom.smartmealtable.web.auth.social.SocialConst.GOOGLE;
 import static com.stcom.smartmealtable.web.auth.social.SocialConst.KAKAO;
 
 import com.stcom.smartmealtable.web.dto.token.TokenDto;
@@ -14,10 +15,11 @@ import org.springframework.web.client.RestClient.ResponseSpec;
 
 @Component
 @RequiredArgsConstructor
-public class SocialManager {
+public class SocialHttpMessageManager {
 
     private final Map<String, SocialHttpMessage> socialMap = new HashMap<>();
     private final KakaoHttpMessage kakaoHttpMessage;
+    private final GoogleHttpMessage googleHttpMessage;
 
     public RequestBodySpec getTokenRequestMessage(RestClient client, String provider, String code) {
         return socialMap.get(provider).getRequestMessage(client, code);
@@ -30,5 +32,6 @@ public class SocialManager {
     @PostConstruct
     public void init() {
         socialMap.put(KAKAO, kakaoHttpMessage);
+        socialMap.put(GOOGLE, googleHttpMessage);
     }
 }
