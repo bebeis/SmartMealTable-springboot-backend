@@ -12,11 +12,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @Table(name = "member_auth")
+@Getter
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -30,6 +32,8 @@ public class Member extends BaseTimeEntity {
     @Embedded
     private MemberPassword password;
 
+    private String fullName;
+
     // TODO: 이메일 인증 기능 구현해야함
     private boolean isEmailVerified = true;
 
@@ -38,7 +42,8 @@ public class Member extends BaseTimeEntity {
     private MemberProfile memberProfile;
 
     @Builder
-    public Member(String email, String rawPassword) throws PasswordPolicyException {
+    public Member(String fullName, String email, String rawPassword) throws PasswordPolicyException {
+        this.fullName = fullName;
         this.email = email;
         this.password = new MemberPassword(rawPassword);
     }
