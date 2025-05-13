@@ -30,6 +30,8 @@ public class SocialAccount extends BaseTimeEntity {
 
     private String providerUserId;
 
+    private String tokenType;
+
     private String accessToken;
 
     private String refreshToken;
@@ -37,11 +39,12 @@ public class SocialAccount extends BaseTimeEntity {
     private LocalDateTime tokenExpiresAt;
 
     @Builder
-    public SocialAccount(Member member, String provider, String providerUserId,
+    public SocialAccount(Member member, String provider, String providerUserId, String tokenType,
                          String accessToken, String refreshToken, LocalDateTime tokenExpiresAt) {
         this.member = member;
         this.provider = provider;
         this.providerUserId = providerUserId;
+        this.tokenType = tokenType;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.tokenExpiresAt = tokenExpiresAt;
