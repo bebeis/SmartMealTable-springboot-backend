@@ -38,7 +38,7 @@ public class SocialAccountService {
     }
 
     public boolean isNewUser(String provider, String providerUserId) {
-        return socialAccountRepository.findByProviderAndProviderUserId(provider, providerUserId).isPresent();
+        return socialAccountRepository.findByProviderAndProviderUserId(provider, providerUserId).isEmpty();
     }
 
     @Transactional

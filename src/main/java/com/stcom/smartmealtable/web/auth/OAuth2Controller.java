@@ -1,5 +1,6 @@
 package com.stcom.smartmealtable.web.auth;
 
+
 import com.stcom.smartmealtable.domain.social.SocialAccountService;
 import com.stcom.smartmealtable.security.JwtTokenService;
 import com.stcom.smartmealtable.web.auth.social.SocialManager;
@@ -31,18 +32,22 @@ public class OAuth2Controller {
 
     @PostMapping("/oauth2/code")
     public ApiResponse<JwtTokenResponseDto> getTokenFromSocial(@RequestBody JwtTokenRequest request) {
+        log.info("request = {}", request);
         RequestBodySpec tokenRequestMessage = socialManager.getTokenRequestMessage(client, request.getProvider(),
                 request.getAuthorizationCode());
         TokenDto token = socialManager.getTokenResponse(tokenRequestMessage.retrieve(), request.getProvider());
+        log.info("response 성공 = {}", token);
         boolean isNewUser = socialAccountService.isNewUser(token.getProvider(),
                 token.getProviderUserId());
-        if (!isNewUser) {
+        log.info("새로운 멤버인지 확인 = {}", isNewUser);
+        if (isNewUser) {
             socialAccountService.createNewAccount(token);
         }
 
         JwtTokenResponseDto tokenDto = jwtTokenService.createTokenDto(
                 socialAccountService.findMemberId(token.getProvider(), token.getProviderUserId()));
         tokenDto.setNewUser(isNewUser);
+        log.info("response = {}", tokenDto);
         return ApiResponse.createSuccess(tokenDto);
     }
 
