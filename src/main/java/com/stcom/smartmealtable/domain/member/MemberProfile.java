@@ -5,6 +5,8 @@ import com.stcom.smartmealtable.domain.common.Address;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,7 +26,12 @@ public class MemberProfile extends BaseTimeEntity {
     @OneToOne(mappedBy = "memberProfile")
     private Member member;
 
-    private String fullName;
+    @Enumerated(EnumType.STRING)
+    private MemberGroup memberGroup;
+
+    private Long groupCode;
+
+    private String nickName;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_id")
@@ -34,11 +41,11 @@ public class MemberProfile extends BaseTimeEntity {
         this.member = member;
     }
 
-    public void changeFullName(String newName) {
-        if (newName.isBlank()) {
+    public void changeNickName(String newNickName) {
+        if (newNickName.isBlank()) {
             throw new IllegalArgumentException("이름은 비어 있을 수 없습니다.");
         }
-        this.fullName = newName;
+        this.nickName = newNickName;
     }
 
     public void addAddress(Address address) {
