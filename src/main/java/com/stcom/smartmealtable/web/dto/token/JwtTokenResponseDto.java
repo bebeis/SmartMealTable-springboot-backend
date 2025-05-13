@@ -1,8 +1,10 @@
 package com.stcom.smartmealtable.web.dto.token;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public class JwtTokenResponseDto {
 
     private String accessToken;
