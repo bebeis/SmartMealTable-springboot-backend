@@ -318,4 +318,7 @@ gradle-app.setting
 # yml
 *.yml
 
+# CI/CD 워크플로우 파일은 추적
+!.github/workflows/ci-cd.yml
+
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,macos,gradle,git,maven,visualstudiocode,windows
