@@ -318,7 +318,9 @@ gradle-app.setting
 # yml
 *.yml
 
-# CI/CD 워크플로우 파일은 추적
+# .github 디렉터리와 워크플로우 폴더는 무시하지 않기
+!.github/
+!.github/workflows/
 !.github/workflows/ci-cd.yml
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,macos,gradle,git,maven,visualstudiocode,windows
