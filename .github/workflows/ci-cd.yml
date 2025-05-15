@@ -64,11 +64,11 @@ jobs:
             docker rm -f smart-meal-table || true
             # 2) 최신 이미지 pull
             docker pull docker.io/${{ secrets.DOCKERHUB_USER }}/smart-meal-table:${{ github.sha }}
-            # 3) 컨테이너 실행 (prod 프로파일)
+            # 3) 컨테이너 실행 (dev 프로파일)
             docker run -d \
               --name smart-meal-table \
               -v /home/ubuntu/app:/config \
-              -e SPRING_PROFILES_ACTIVE=prod \
+              -e SPRING_PROFILES_ACTIVE=dev \
               -p 8080:8080 \
               docker.io/${{ secrets.DOCKERHUB_USER }}/smart-meal-table:${{ github.sha }}
           EOF
