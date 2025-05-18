@@ -1,4 +1,4 @@
-package com.stcom.smartmealtable.domain.member;
+package com.stcom.smartmealtable.exception;
 
 public class PasswordFailedExceededException extends Exception {
     public PasswordFailedExceededException() {
