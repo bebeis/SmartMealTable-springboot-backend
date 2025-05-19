@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.stcom.smartmealtable.service.dto.token.TokenDto;
+import com.stcom.smartmealtable.infrastructure.dto.TokenDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +62,7 @@ public class KakaoHttpMessage implements SocialHttpMessage {
                 .tokenType(tokenResponse.getTokenType())
                 .provider(KAKAO)
                 .providerUserId(extractProviderUserId(tokenResponse.getIdToken()))
+                .email(extractEmail(tokenResponse.getIdToken()))
                 .build();
     }
 
@@ -87,6 +88,28 @@ public class KakaoHttpMessage implements SocialHttpMessage {
         } catch (Exception e) {
             // 예외 발생 시 로깅 및 null 반환
             System.err.println("카카오 ID 토큰 파싱 오류: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public String extractEmail(String idToken) {
+        if (idToken == null || idToken.isEmpty()) {
+            return null;
+        }
+        try {
+            String[] parts = idToken.split("\\.");
+            if (parts.length != 3) {
+                return null;
+            }
+            String payloadJson = new String(
+                    java.util.Base64.getUrlDecoder().decode(parts[1]),
+                    java.nio.charset.StandardCharsets.UTF_8
+            );
+
+            JsonNode node = new ObjectMapper().readTree(payloadJson);
+            return node.has("email") ? node.get("email").asText() : null;
+        } catch (Exception e) {
+            log.error("카카오 ID 토큰에서 email 파싱 실패", e);
             return null;
         }
     }

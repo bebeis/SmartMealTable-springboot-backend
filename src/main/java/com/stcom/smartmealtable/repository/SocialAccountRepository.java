@@ -1,6 +1,7 @@
 package com.stcom.smartmealtable.repository;
 
 import com.stcom.smartmealtable.domain.social.SocialAccount;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface SocialAccountRepository extends JpaRepository<SocialAccount, Lo
             @Param("provider") String provider,
             @Param("providerUserId") String providerUserId
     );
+
+    List<SocialAccount> findAllByMemberId(Long memberId);
 }

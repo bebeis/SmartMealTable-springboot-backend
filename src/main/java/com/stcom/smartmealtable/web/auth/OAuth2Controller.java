@@ -1,11 +1,12 @@
 package com.stcom.smartmealtable.web.auth;
 
 
-import com.stcom.smartmealtable.infrastructure.social.SocialAuthService;
+import com.stcom.smartmealtable.infrastructure.SocialAuthService;
+import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
+import com.stcom.smartmealtable.infrastructure.dto.TokenDto;
 import com.stcom.smartmealtable.security.JwtTokenService;
+import com.stcom.smartmealtable.service.MemberService;
 import com.stcom.smartmealtable.service.SocialAccountService;
-import com.stcom.smartmealtable.service.dto.token.JwtTokenResponseDto;
-import com.stcom.smartmealtable.service.dto.token.TokenDto;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -27,22 +28,26 @@ public class OAuth2Controller {
     private final SocialAccountService socialAccountService;
     private final JwtTokenService jwtTokenService;
     private final SocialAuthService socialAuthService;
+    private final MemberService memberService;
 
     @PostMapping("/oauth2/code")
     public ApiResponse<JwtTokenResponseDto> getTokenFromSocial(@RequestBody JwtTokenRequest request) {
         log.info("request = {}", request);
-        TokenDto token = socialAuthService.getTokenResponse(request.getProvider(), request.getAuthorizationCode());
+        TokenDto token = socialAuthService.getTokenResponse(request.getProvider().toLowerCase(),
+                request.getAuthorizationCode());
         log.info("response 성공 = {}", token);
-        boolean isNewUser = socialAccountService.isNewUser(token.getProvider(),
+        boolean isNewMember = memberService.isNewMember(token.getEmail());
+        boolean isSocialNewUser = socialAccountService.isNewUser(token.getProvider(),
                 token.getProviderUserId());
-        log.info("새로운 멤버인지 확인 = {}", isNewUser);
-        if (isNewUser) {
-            socialAccountService.createNewAccount(token);
+        if (isNewMember && isSocialNewUser) { // 소셜, 회원 모두 신규
+            socialAccountService.createNewMemberAndLinkSocialAccount(token);
+        } else if (isSocialNewUser) { // 소셜만 신규, 회원은 존재
+            socialAccountService.linkSocialAccount(token);
         }
 
         JwtTokenResponseDto tokenDto = jwtTokenService.createTokenDto(
                 socialAccountService.findMemberId(token.getProvider(), token.getProviderUserId()));
-        tokenDto.setNewUser(isNewUser);
+        tokenDto.setNewUser(isSocialNewUser);
         log.info("response = {}", tokenDto);
         return ApiResponse.createSuccess(tokenDto);
     }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.stcom.smartmealtable.service.dto.token.TokenDto;
+import com.stcom.smartmealtable.infrastructure.dto.TokenDto;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.Data;
@@ -68,9 +68,9 @@ public class GoogleHttpMessage implements SocialHttpMessage {
                 .tokenType(tokenResponse.getTokenType())
                 .provider(GOOGLE)
                 .providerUserId(extractProviderUserId(tokenResponse.getIdToken()))
+                .email(extractEmail(tokenResponse.getIdToken()))
                 .build();
     }
-
 
     @Override
     public String extractProviderUserId(String idToken) {
@@ -90,6 +90,24 @@ public class GoogleHttpMessage implements SocialHttpMessage {
         } catch (Exception e) {
             // 로깅: 어떤 공급자(token issuer)에 대한 토큰인지 같이 찍어도 좋습니다.
             log.error("ID 토큰 파싱 오류: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public String extractEmail(String idToken) {
+        if (idToken == null || idToken.isBlank()) {
+            return null;
+        }
+        try {
+            String[] parts = idToken.split("\\.");
+            if (parts.length != 3) {
+                return null;
+            }
+            String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+            JsonNode node = new ObjectMapper().readTree(payload);
+            return node.has("email") ? node.get("email").asText() : null;
+        } catch (Exception e) {
+            log.error("Google ID 토큰에서 email 파싱 실패: {}", e.getMessage());
             return null;
         }
     }

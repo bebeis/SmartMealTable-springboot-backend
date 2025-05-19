@@ -2,10 +2,10 @@ package com.stcom.smartmealtable.repository;
 
 import com.stcom.smartmealtable.domain.member.Member;
 import jakarta.validation.constraints.Email;
-import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    List<Member> findMemberByEmail(@Email String email);
+    Optional<Member> findMemberByEmail(@Email String email);
 }

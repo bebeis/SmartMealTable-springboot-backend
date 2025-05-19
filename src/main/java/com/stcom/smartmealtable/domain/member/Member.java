@@ -43,6 +43,10 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "member_profile_id")
     private MemberProfile memberProfile;
 
+    public Member(String email) {
+        this.email = email;
+    }
+
     @Builder
     public Member(String fullName, String email, String rawPassword) throws PasswordPolicyException {
         this.fullName = fullName;
