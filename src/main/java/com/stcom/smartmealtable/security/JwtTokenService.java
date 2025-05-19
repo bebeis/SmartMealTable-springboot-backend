@@ -1,8 +1,8 @@
 package com.stcom.smartmealtable.security;
 
 import com.stcom.smartmealtable.domain.member.Member;
+import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
 import com.stcom.smartmealtable.repository.MemberRepository;
-import com.stcom.smartmealtable.service.dto.token.JwtTokenResponseDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

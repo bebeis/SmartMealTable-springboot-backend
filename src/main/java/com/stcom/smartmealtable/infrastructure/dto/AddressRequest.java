@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AddressRequestDto {
+public class AddressRequest {
 
     private String roadAddress;
 

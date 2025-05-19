@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.stcom.smartmealtable.domain.Address.Address;
-import com.stcom.smartmealtable.infrastructure.dto.AddressRequestDto;
+import com.stcom.smartmealtable.infrastructure.dto.AddressRequest;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class AddressApiService {
 
     private final RestClient client = RestClient.create();
 
-    public Address createAddressFromRequest(AddressRequestDto requestDto) {
+    public Address createAddressFromRequest(AddressRequest requestDto) {
         AddressSearchResponse addressSearchResponse = client.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -35,7 +35,7 @@ public class AddressApiService {
         if (addressSearchResponse.getMeta().getTotalCount() >= 2) {
             throw new IllegalArgumentException("주소가 모호합니다. 정확한 주소를 입력하세요");
         }
-        
+
         return Address.builder()
                 .type(requestDto.getAddressType())
                 .alias(requestDto.getAlias())

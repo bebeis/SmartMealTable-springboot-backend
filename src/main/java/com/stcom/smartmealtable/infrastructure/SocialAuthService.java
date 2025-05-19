@@ -1,9 +1,12 @@
-package com.stcom.smartmealtable.infrastructure.social;
+package com.stcom.smartmealtable.infrastructure;
 
 import static com.stcom.smartmealtable.infrastructure.social.SocialConst.GOOGLE;
 import static com.stcom.smartmealtable.infrastructure.social.SocialConst.KAKAO;
 
-import com.stcom.smartmealtable.service.dto.token.TokenDto;
+import com.stcom.smartmealtable.infrastructure.dto.TokenDto;
+import com.stcom.smartmealtable.infrastructure.social.GoogleHttpMessage;
+import com.stcom.smartmealtable.infrastructure.social.KakaoHttpMessage;
+import com.stcom.smartmealtable.infrastructure.social.SocialHttpMessage;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.HashMap;

@@ -16,10 +16,12 @@ import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class MemberProfile extends BaseTimeEntity {
 
     @Id
@@ -33,7 +35,7 @@ public class MemberProfile extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MemberGroup memberGroup;
 
-    private Long groupCode;
+    private String groupName;
 
     private String nickName;
 
@@ -42,11 +44,11 @@ public class MemberProfile extends BaseTimeEntity {
     private List<Address> addressHistory = new ArrayList<>();
 
     @Builder
-    public MemberProfile(Member member, MemberGroup memberGroup, Long groupCode, String nickName,
+    public MemberProfile(Member member, MemberGroup memberGroup, String groupName, String nickName,
                          List<Address> addressHistory) {
         this.member = member;
         this.memberGroup = memberGroup;
-        this.groupCode = groupCode;
+        this.groupName = groupName;
         this.nickName = nickName;
         this.addressHistory = addressHistory;
     }
