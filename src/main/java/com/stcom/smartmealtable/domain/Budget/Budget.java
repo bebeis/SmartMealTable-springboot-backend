@@ -4,6 +4,7 @@ import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -16,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-//@Entity
+@Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 @NoArgsConstructor
@@ -33,6 +34,7 @@ public abstract class Budget extends BaseTimeEntity {
 
     private BigDecimal spendAmount = BigDecimal.ZERO;
 
+    @Column(name = "budget_limit")
     private BigDecimal limit;
 
     protected Budget(Member member, BigDecimal limit) {

@@ -1,12 +1,14 @@
 package com.stcom.smartmealtable.domain.Budget;
 
 import com.stcom.smartmealtable.domain.member.Member;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-//@Entity
+@Entity
 @Getter
 @NoArgsConstructor
 public class DailyBudget extends Budget {
@@ -17,5 +19,6 @@ public class DailyBudget extends Budget {
         this.date = date;
     }
 
+    @Column(name = "daily_budget_date")
     private LocalDate date;
 }
