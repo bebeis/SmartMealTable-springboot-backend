@@ -1,6 +1,9 @@
 package com.stcom.smartmealtable.domain.member;
 
-import com.stcom.smartmealtable.common.BaseTimeEntity;
+import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
+import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
+import com.stcom.smartmealtable.exception.PasswordPolicyException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -36,7 +39,7 @@ public class Member extends BaseTimeEntity {
     // TODO: 이메일 인증 기능 구현해야함
     private boolean isEmailVerified = true;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_profile_id")
     private MemberProfile memberProfile;
 

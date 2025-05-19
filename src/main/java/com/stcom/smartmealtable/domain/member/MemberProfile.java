@@ -1,7 +1,7 @@
 package com.stcom.smartmealtable.domain.member;
 
-import com.stcom.smartmealtable.common.BaseTimeEntity;
-import com.stcom.smartmealtable.domain.common.Address;
+import com.stcom.smartmealtable.domain.Address.Address;
+import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +15,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class MemberProfile extends BaseTimeEntity {
 
     @Id
@@ -24,7 +27,7 @@ public class MemberProfile extends BaseTimeEntity {
     @Column(name = "member_profile_id")
     private Long id;
 
-    @OneToOne(mappedBy = "memberProfile")
+    @OneToOne(mappedBy = "memberProfile", orphanRemoval = true)
     private Member member;
 
     @Enumerated(EnumType.STRING)
@@ -37,6 +40,16 @@ public class MemberProfile extends BaseTimeEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_id")
     private List<Address> addressHistory = new ArrayList<>();
+
+    @Builder
+    public MemberProfile(Member member, MemberGroup memberGroup, Long groupCode, String nickName,
+                         List<Address> addressHistory) {
+        this.member = member;
+        this.memberGroup = memberGroup;
+        this.groupCode = groupCode;
+        this.nickName = nickName;
+        this.addressHistory = addressHistory;
+    }
 
     protected void linkMemberAuth(Member member) {
         this.member = member;
