@@ -1,4 +1,4 @@
-package com.stcom.smartmealtable.common;
+package com.stcom.smartmealtable.domain.common;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

@@ -1,6 +1,6 @@
-package com.stcom.smartmealtable.web.auth.social;
+package com.stcom.smartmealtable.infrastructure.social;
 
-import com.stcom.smartmealtable.web.dto.token.TokenDto;
+import com.stcom.smartmealtable.service.dto.token.TokenDto;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodySpec;
 import org.springframework.web.client.RestClient.ResponseSpec;

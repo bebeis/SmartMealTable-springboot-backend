@@ -1,6 +1,8 @@
 package com.stcom.smartmealtable.domain.member;
 
 
+import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
+import com.stcom.smartmealtable.exception.PasswordPolicyException;
 import jakarta.persistence.Embeddable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

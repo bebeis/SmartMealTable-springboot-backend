@@ -1,5 +1,6 @@
-package com.stcom.smartmealtable.domain.social;
+package com.stcom.smartmealtable.repository;
 
+import com.stcom.smartmealtable.domain.social.SocialAccount;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

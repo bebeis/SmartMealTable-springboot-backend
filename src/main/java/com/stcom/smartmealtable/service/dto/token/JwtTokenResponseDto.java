@@ -1,4 +1,4 @@
-package com.stcom.smartmealtable.web.dto.token;
+package com.stcom.smartmealtable.service.dto.token;
 
 import lombok.Data;
 import lombok.ToString;

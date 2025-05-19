@@ -1,4 +1,4 @@
-package com.stcom.smartmealtable.web.auth.social;
+package com.stcom.smartmealtable.infrastructure.social;
 
 public abstract class SocialConst {
 

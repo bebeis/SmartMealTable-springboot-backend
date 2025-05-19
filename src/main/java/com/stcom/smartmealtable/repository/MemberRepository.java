@@ -1,5 +1,6 @@
-package com.stcom.smartmealtable.domain.member;
+package com.stcom.smartmealtable.repository;
 
+import com.stcom.smartmealtable.domain.member.Member;
 import jakarta.validation.constraints.Email;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package com.stcom.smartmealtable.domain.social;
 
-import com.stcom.smartmealtable.common.BaseTimeEntity;
+import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

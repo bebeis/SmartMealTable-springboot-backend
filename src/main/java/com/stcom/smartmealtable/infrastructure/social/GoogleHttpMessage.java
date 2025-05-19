@@ -1,12 +1,12 @@
-package com.stcom.smartmealtable.web.auth.social;
+package com.stcom.smartmealtable.infrastructure.social;
 
-import static com.stcom.smartmealtable.web.auth.social.SocialConst.GOOGLE;
+import static com.stcom.smartmealtable.infrastructure.social.SocialConst.GOOGLE;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.stcom.smartmealtable.web.dto.token.TokenDto;
+import com.stcom.smartmealtable.service.dto.token.TokenDto;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.Data;
