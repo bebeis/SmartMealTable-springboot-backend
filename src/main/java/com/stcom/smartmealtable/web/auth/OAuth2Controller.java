@@ -1,12 +1,12 @@
 package com.stcom.smartmealtable.web.auth;
 
 
-import com.stcom.smartmealtable.domain.social.SocialAccountService;
+import com.stcom.smartmealtable.infrastructure.social.SocialAuthService;
 import com.stcom.smartmealtable.security.JwtTokenService;
-import com.stcom.smartmealtable.web.auth.social.SocialHttpMessageManager;
+import com.stcom.smartmealtable.service.SocialAccountService;
+import com.stcom.smartmealtable.service.dto.token.JwtTokenResponseDto;
+import com.stcom.smartmealtable.service.dto.token.TokenDto;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
-import com.stcom.smartmealtable.web.dto.token.JwtTokenResponseDto;
-import com.stcom.smartmealtable.web.dto.token.TokenDto;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClient.RequestBodySpec;
 
 @RestController
 @Slf4j
@@ -25,17 +23,15 @@ import org.springframework.web.client.RestClient.RequestBodySpec;
 @RequiredArgsConstructor
 public class OAuth2Controller {
 
-    private final SocialHttpMessageManager socialManager;
-    private final RestClient client = RestClient.create();
+    private final SocialAuthService socialManager;
     private final SocialAccountService socialAccountService;
     private final JwtTokenService jwtTokenService;
+    private final SocialAuthService socialAuthService;
 
     @PostMapping("/oauth2/code")
     public ApiResponse<JwtTokenResponseDto> getTokenFromSocial(@RequestBody JwtTokenRequest request) {
         log.info("request = {}", request);
-        RequestBodySpec tokenRequestMessage = socialManager.getTokenRequestMessage(client, request.getProvider(),
-                request.getAuthorizationCode());
-        TokenDto token = socialManager.getTokenResponse(tokenRequestMessage.retrieve(), request.getProvider());
+        TokenDto token = socialAuthService.getTokenResponse(request.getProvider(), request.getAuthorizationCode());
         log.info("response 성공 = {}", token);
         boolean isNewUser = socialAccountService.isNewUser(token.getProvider(),
                 token.getProviderUserId());

@@ -1,8 +1,10 @@
-package com.stcom.smartmealtable.domain.social;
+package com.stcom.smartmealtable.service;
 
 import com.stcom.smartmealtable.domain.member.Member;
-import com.stcom.smartmealtable.domain.member.MemberRepository;
-import com.stcom.smartmealtable.web.dto.token.TokenDto;
+import com.stcom.smartmealtable.domain.social.SocialAccount;
+import com.stcom.smartmealtable.repository.MemberRepository;
+import com.stcom.smartmealtable.repository.SocialAccountRepository;
+import com.stcom.smartmealtable.service.dto.token.TokenDto;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,10 +44,11 @@ public class SocialAccountService {
     }
 
     @Transactional
-    public void updateToken(SocialAccount socialAccount, String accessToken, String refreshToken,
+    public void updateToken(Long socialAccountId, String accessToken, String refreshToken,
                             LocalDateTime tokenExpiresAt) {
+        SocialAccount socialAccount = socialAccountRepository.findById(socialAccountId)
+                .orElseThrow(() -> new IllegalStateException("확인되지 않은 계정입니다"));
         socialAccount.updateToken(accessToken, refreshToken, tokenExpiresAt);
-        socialAccountRepository.save(socialAccount);
     }
 
     public Long findMemberId(String provider, String providerUserId) {
