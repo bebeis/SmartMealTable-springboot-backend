@@ -90,7 +90,7 @@ public class MemberController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/profile/me")
     public ApiResponse<?> memberProfile(@JwtAuthorization Member member) {
         MemberProfile memberProfile = memberService.findMemberProfileByMemberId(member.getId());
         DailyBudget dailyBudget = budgetService.findRecentDailyBudgetByMemberId(member.getId());
