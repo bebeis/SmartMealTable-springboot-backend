@@ -16,18 +16,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1/auth")
 public class LoginController {
 
     private final LoginService loginService;
     private final JwtTokenService jwtTokenService;
     private final JwtBlacklistService jwtBlacklistService;
 
-    @PostMapping("/api/v1/login")
+    @PostMapping("/login")
     public ApiResponse<?> login(@JwtAuthorization Member member, @RequestBody LoginRequest request)
             throws PasswordFailedExceededException {
         if (member == null) {
@@ -42,7 +44,7 @@ public class LoginController {
         return ApiResponse.createSuccess(tokenResponseDto);
     }
 
-    @PostMapping("/api/v1/logout")
+    @PostMapping("/logout")
     public ApiResponse<?> logout(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization");
         if (jwt.isBlank()) {
