@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class JwtTokenService {
 
     private final MemberRepository memberRepository;
+    private final JwtBlacklistService jwtBlacklistService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -72,23 +73,21 @@ public class JwtTokenService {
         }
     }
 
-    public boolean validateToken(String token) {
-        try {
-            // Bearer 접두사 제거
-            if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            }
-
-            // 토큰 검증
-            Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-                    .build()
-                    .parseClaimsJws(token);
-
-            return true;
-        } catch (Exception e) {
-            return false;
+    public void validateToken(String token) {
+        // Bearer 접두사 제거
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
         }
+
+        if (jwtBlacklistService.isBlacklisted(token)) {
+            throw new IllegalArgumentException("블랙리스트에 추가된 토큰으로 접근하였습니다");
+        }
+
+        // 토큰 검증
+        Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token);
     }
 
     public Member getClaim(String token) {

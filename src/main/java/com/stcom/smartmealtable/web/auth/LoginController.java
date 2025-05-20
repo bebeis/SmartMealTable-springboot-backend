@@ -4,9 +4,11 @@ import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
 import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
 import com.stcom.smartmealtable.security.JwtAuthorization;
+import com.stcom.smartmealtable.security.JwtBlacklistService;
 import com.stcom.smartmealtable.security.JwtTokenService;
 import com.stcom.smartmealtable.service.LoginService;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -23,6 +25,7 @@ public class LoginController {
 
     private final LoginService loginService;
     private final JwtTokenService jwtTokenService;
+    private final JwtBlacklistService jwtBlacklistService;
 
     @PostMapping("/api/v1/login")
     public ApiResponse<?> login(@JwtAuthorization Member member, @RequestBody LoginRequest request)
@@ -39,6 +42,15 @@ public class LoginController {
         return ApiResponse.createSuccess(tokenResponseDto);
     }
 
+    @PostMapping("/api/v1/logout")
+    public ApiResponse<?> logout(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization");
+        if (jwt.isBlank()) {
+            return ApiResponse.createError("인증 토큰이 없습니다");
+        }
+        jwtBlacklistService.addToBlacklist(jwt);
+        return ApiResponse.createSuccessWithNoContent();
+    }
 
     @Data
     static class LoginRequest {

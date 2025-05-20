@@ -33,10 +33,8 @@ public class JwtAuthorizationArgumentResolver implements HandlerMethodArgumentRe
 
             if (token != null && !token.trim().equals("")) {
                 // 토큰 있을 경우 검증
-                if (jwtTokenService.validateToken(token)) {
-                    // 검증 후 MemberProfile 리턴
-                    return jwtTokenService.getClaim(token);
-                }
+                jwtTokenService.validateToken(token);
+                return jwtTokenService.getClaim(token);
             }
         }
 
