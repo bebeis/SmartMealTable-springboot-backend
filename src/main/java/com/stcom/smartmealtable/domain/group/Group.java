@@ -29,7 +29,5 @@ public abstract class Group {
     private Address address;
 
     private String name;
-
-    private GroupType groupType;
-
+    
 }

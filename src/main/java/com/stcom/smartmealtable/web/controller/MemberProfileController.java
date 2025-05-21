@@ -1,8 +1,8 @@
 package com.stcom.smartmealtable.web.controller;
 
 import com.stcom.smartmealtable.domain.Address.Address;
-import com.stcom.smartmealtable.domain.group.GroupType;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
+import com.stcom.smartmealtable.domain.member.MemberType;
 import com.stcom.smartmealtable.service.MemberProfileService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
@@ -32,18 +32,24 @@ public class MemberProfileController {
 
     @PostMapping()
     public ApiResponse<?> createMemberProfile(@UserContext MemberDto memberDto,
-                                              @Validated @RequestBody MemberProfileCreateRequest request) {
-        memberProfileService.createProfile(request.getNickName(), memberDto.getMemberId(), request.getGroupType(),
+                                              @Validated @RequestBody MemberProfileRequest request) {
+        memberProfileService.createProfile(request.getNickName(), memberDto.getMemberId(), request.getMemberType(),
                 request.getGroupId());
         return ApiResponse.createSuccessWithNoContent();
     }
+
+//    @PostMapping()
+//    public ApiResponse<?> changeMemberProfile(@UserContext MemberDto memberDto,
+//                                              @Validated @RequestBody MemberProfileRequest request) {
+//
+//    }
 
     @AllArgsConstructor
     @Data
     static class MemberProfilePageResponse {
         private String nickName;
         private String email;
-        private GroupType groupType;
+        private MemberType memberType;
         private String groupName;
         private String primaryAddress;
 
@@ -52,17 +58,17 @@ public class MemberProfileController {
             this.email = memberDto.getEmail();
             Address address = profile.findPrimaryAddress().getAddress();
             this.primaryAddress = address.getRoadAddress() + address.getDetailAddress();
-            this.groupType = profile.getGroup().getGroupType();
+            this.memberType = profile.getType();
             this.groupName = profile.getGroup().getName();
         }
     }
 
     @AllArgsConstructor
     @Data
-    static class MemberProfileCreateRequest {
+    static class MemberProfileRequest {
         private String nickName;
         private Long groupId;
-        private GroupType groupType;
+        private MemberType memberType;
     }
 
 }

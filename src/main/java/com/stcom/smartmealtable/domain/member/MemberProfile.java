@@ -6,6 +6,7 @@ import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.group.Group;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -41,15 +42,21 @@ public class MemberProfile extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private List<AddressEntity> addressHistory = new ArrayList<>();
 
+    @Embedded
+    private MemberType type;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
 
+
     @Builder
-    public MemberProfile(Member member, String nickName, List<AddressEntity> addressHistory, Group group) {
+    public MemberProfile(Member member, String nickName, List<AddressEntity> addressHistory, MemberType type,
+                         Group group) {
         linkMember(member);
         this.nickName = nickName;
         this.addressHistory = addressHistory;
+        this.type = type;
         this.group = group;
     }
 
@@ -83,5 +90,9 @@ public class MemberProfile extends BaseTimeEntity {
     public void setPrimaryAddress(AddressEntity target) {
         addressHistory.forEach(AddressEntity::unmarkPrimary);
         target.markPrimary();
+    }
+
+    public void changeGroup(Group newGroup) {
+        this.group = newGroup;
     }
 }

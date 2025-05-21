@@ -1,9 +1,9 @@
 package com.stcom.smartmealtable.service;
 
 import com.stcom.smartmealtable.domain.group.Group;
-import com.stcom.smartmealtable.domain.group.GroupType;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
+import com.stcom.smartmealtable.domain.member.MemberType;
 import com.stcom.smartmealtable.repository.GroupRepository;
 import com.stcom.smartmealtable.repository.MemberProfileRepository;
 import com.stcom.smartmealtable.repository.MemberRepository;
@@ -25,7 +25,7 @@ public class MemberProfileService {
     }
 
     @Transactional
-    public void createProfile(String nickName, Long memberId, GroupType groupType, Long groupId) {
+    public void createProfile(String nickName, Long memberId, MemberType type, Long groupId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
 
@@ -37,9 +37,22 @@ public class MemberProfileService {
         MemberProfile profile = MemberProfile.builder()
                 .nickName(nickName)
                 .member(member)
+                .type(type)
                 .group(group)
                 .build();
 
         memberProfileRepository.save(profile);
+    }
+
+    @Transactional
+    public void changeProfile(Long profileId, String nickName, MemberProfile type, Long groupId) {
+        MemberProfile profile = memberProfileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
+
+        profile.changeNickName(nickName);
+        Group newGroup = (groupId != null)
+                ? groupRepository.getReferenceById(groupId)
+                : null;
+        profile.changeGroup(newGroup);
     }
 }
