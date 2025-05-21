@@ -40,14 +40,14 @@ public class MemberProfile extends BaseTimeEntity {
     private String nickName;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_profile_id")
     private List<AddressEntity> addressHistory = new ArrayList<>();
 
     @Embedded
     private MemberType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "affiliation_id")
     private Group group;
 
 

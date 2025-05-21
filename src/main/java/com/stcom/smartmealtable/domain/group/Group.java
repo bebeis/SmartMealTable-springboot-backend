@@ -1,6 +1,7 @@
 package com.stcom.smartmealtable.domain.group;
 
 import com.stcom.smartmealtable.domain.Address.Address;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -14,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "groups")
+@Table(name = "affiliation")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 @Getter
@@ -23,11 +24,12 @@ public abstract class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "affiliation_id")
     private Long id;
 
     @Embedded
     private Address address;
 
     private String name;
-    
+
 }

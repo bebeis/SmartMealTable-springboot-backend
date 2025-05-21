@@ -14,12 +14,12 @@ public class BudgetService {
 
     private final BudgetRepository budgetRepository;
 
-    public DailyBudget findRecentDailyBudgetByMemberId(Long memberId) {
-        return budgetRepository.findFirstDailyBudgetByMemberId(memberId).orElse(null);
+    public DailyBudget findRecentDailyBudgetByMemberProfileId(Long memberProfileId) {
+        return budgetRepository.findFirstDailyBudgetByMemberProfileId(memberProfileId).orElse(null);
     }
 
-    public MonthlyBudget findRecentMonthlyBudgetByMemberId(Long memberId) {
-        return budgetRepository.findFirstMonthlyBudgetByMemberId(memberId).orElse(null);
+    public MonthlyBudget findRecentMonthlyBudgetByMemberProfileId(Long memberProfileId) {
+        return budgetRepository.findFirstMonthlyBudgetByMemberProfileId(memberProfileId).orElse(null);
     }
 
 }

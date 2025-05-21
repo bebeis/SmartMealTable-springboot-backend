@@ -27,6 +27,7 @@ public class AddressEntity {
     @Embedded
     private Address address;
 
+    @Column(name = "is_primary")
     private boolean primary = false;
 
     @Enumerated(EnumType.STRING)

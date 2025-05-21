@@ -11,15 +11,15 @@ import org.springframework.data.repository.query.Param;
 
 public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
-    @Query("select b from Budget b where type(b) = DailyBudget and b.member.id = :memberId")
-    List<DailyBudget> findDailyBudgetsViaType(@Param("memberId") Long memberId);
+    @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :memberProfileId")
+    List<DailyBudget> findDailyBudgetsViaType(@Param("memberProfileId") Long memberProfileId);
 
-    @Query("select b from Budget b where type(b) = DailyBudget and b.member.id = :memberId order by treat (b as DailyBudget).date desc")
-    Optional<DailyBudget> findFirstDailyBudgetByMemberId(@Param("memberId") Long memberId);
+    @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :memberProfileId order by treat(b as DailyBudget).date desc")
+    Optional<DailyBudget> findFirstDailyBudgetByMemberProfileId(@Param("memberProfileId") Long memberProfileId);
 
-    @Query("select b from Budget b where type(b) = MonthlyBudget and b.member.id = :memberId")
-    List<MonthlyBudget> findMonthlyBudgetsViaType(@Param("memberId") Long memberId);
+    @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :memberProfileId")
+    List<MonthlyBudget> findMonthlyBudgetsViaType(@Param("memberProfileId") Long memberProfileId);
 
-    @Query("select b from Budget b where type(b) = MonthlyBudget and b.member.id = :memberId order by treat (b as MonthlyBudget ).yearMonth desc")
-    Optional<MonthlyBudget> findFirstMonthlyBudgetByMemberId(@Param("memberId") Long memberId);
+    @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :memberProfileId order by treat(b as MonthlyBudget).yearMonth desc")
+    Optional<MonthlyBudget> findFirstMonthlyBudgetByMemberProfileId(@Param("memberProfileId") Long memberProfileId);
 }
