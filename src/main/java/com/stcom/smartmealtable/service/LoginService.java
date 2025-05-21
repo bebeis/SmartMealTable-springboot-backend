@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LoginService {
 
     private final MemberRepository memberRepository;
     private final SocialAccountRepository socialAccountRepository;
 
+    @Transactional
     public AuthResultDto loginWithEmail(String email, String password) throws PasswordFailedExceededException {
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
