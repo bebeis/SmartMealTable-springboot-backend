@@ -51,6 +51,7 @@ public class MemberProfileController {
     @PostMapping("/addresses/{id}/primary")
     public ApiResponse<?> changePrimaryAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
         memberProfileService.changeAddressToPrimary(memberDto.getProfileId(), addressId);
+        return ApiResponse.createSuccessWithNoContent();
     }
 
     @AllArgsConstructor
