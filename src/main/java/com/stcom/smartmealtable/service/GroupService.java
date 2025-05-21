@@ -1,0 +1,18 @@
+package com.stcom.smartmealtable.service;
+
+import com.stcom.smartmealtable.domain.group.Group;
+import com.stcom.smartmealtable.repository.GroupRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class GroupService {
+
+    private final GroupRepository groupRepository;
+
+    public Group findGroupByGroupId(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
+    }
+}
