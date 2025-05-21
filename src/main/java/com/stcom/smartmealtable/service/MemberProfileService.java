@@ -45,11 +45,12 @@ public class MemberProfileService {
     }
 
     @Transactional
-    public void changeProfile(Long profileId, String nickName, MemberProfile type, Long groupId) {
+    public void changeProfile(Long profileId, String nickName, MemberType type, Long groupId) {
         MemberProfile profile = memberProfileRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
 
         profile.changeNickName(nickName);
+        profile.changeMemberType(type);
         Group newGroup = (groupId != null)
                 ? groupRepository.getReferenceById(groupId)
                 : null;

@@ -87,6 +87,10 @@ public class MemberProfile extends BaseTimeEntity {
         this.nickName = newNickName;
     }
 
+    public void changeMemberType(MemberType memberType) {
+        this.type = memberType;
+    }
+
     public void setPrimaryAddress(AddressEntity target) {
         addressHistory.forEach(AddressEntity::unmarkPrimary);
         target.markPrimary();
