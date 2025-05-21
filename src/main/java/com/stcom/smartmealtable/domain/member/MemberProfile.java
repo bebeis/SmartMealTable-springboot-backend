@@ -69,7 +69,18 @@ public class MemberProfile extends BaseTimeEntity {
     }
 
     public void removeAddress(AddressEntity addressEntity) {
-        addressHistory.remove(addressEntity);
+        boolean wasPrimary = addressEntity.isPrimaryAddress();
+        addressHistory.stream()
+                .filter(a -> a.equals(addressEntity))
+                .findFirst().ifPresentOrElse(
+                        a -> addressHistory.remove(a),
+                        () -> {
+                            throw new IllegalStateException("Primary Address가 없습니다");
+                        }
+                );
+        if (addressHistory.size() > 1 && wasPrimary) {
+            setPrimaryAddress(addressHistory.getFirst());
+        }
     }
 
     public AddressEntity findPrimaryAddress() {

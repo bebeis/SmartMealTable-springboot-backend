@@ -94,4 +94,12 @@ public class MemberProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 주소 정보입니다."));
         profile.changeAddress(addressEntity, address, alias, addressType);
     }
+
+    public void deleteAddress(Long profileId, Long addressEntityId) {
+        MemberProfile profile = memberProfileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
+        AddressEntity addressEntity = addressEntityRepository.findById(addressEntityId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 주소 정보입니다."));
+        profile.removeAddress(addressEntity);
+    }
 }

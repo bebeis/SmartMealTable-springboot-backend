@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,12 @@ public class MemberProfileController {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
         memberProfileService.changeAddress(memberDto.getProfileId(), addressId, address, request.getAlias(),
                 request.getAddressType());
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @DeleteMapping("/addresses/{id}")
+    public ApiResponse<?> deleteAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
+        memberProfileService.deleteAddress(memberDto.getProfileId(), addressId);
         return ApiResponse.createSuccessWithNoContent();
     }
 
