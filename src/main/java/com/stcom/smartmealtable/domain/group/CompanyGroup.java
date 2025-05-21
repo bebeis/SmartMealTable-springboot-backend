@@ -13,4 +13,9 @@ public class CompanyGroup extends Group {
 
     @Enumerated(EnumType.STRING)
     private IndustryType industryType;
+
+    @Override
+    public String getTypeName() {
+        return industryType.getDescription();
+    }
 }

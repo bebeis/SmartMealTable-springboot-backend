@@ -13,4 +13,9 @@ public class SchoolGroup extends Group {
 
     @Enumerated(EnumType.STRING)
     private SchoolType schoolType;
+
+    @Override
+    public String getTypeName() {
+        return schoolType.name();
+    }
 }

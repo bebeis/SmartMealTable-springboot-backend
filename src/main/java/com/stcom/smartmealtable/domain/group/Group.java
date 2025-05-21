@@ -32,4 +32,6 @@ public abstract class Group {
 
     private String name;
 
+    public abstract String getTypeName();
+
 }
