@@ -3,18 +3,17 @@ package com.stcom.smartmealtable.web.controller;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
 import com.stcom.smartmealtable.exception.PasswordPolicyException;
-import com.stcom.smartmealtable.infrastructure.KakaoAddressApiService;
 import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
 import com.stcom.smartmealtable.security.JwtTokenService;
-import com.stcom.smartmealtable.service.BudgetService;
-import com.stcom.smartmealtable.service.FoodPreferenceService;
 import com.stcom.smartmealtable.service.MemberService;
-import com.stcom.smartmealtable.service.SocialAccountService;
+import com.stcom.smartmealtable.service.TermService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
+import com.stcom.smartmealtable.service.dto.TermAgreementRequestDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +39,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final JwtTokenService jwtTokenService;
-    private final KakaoAddressApiService addressApiService;
-    private final BudgetService budgetService;
-    private final SocialAccountService socialAccountService;
-    private final FoodPreferenceService foodPreferenceService;
+    private final TermService termService;
 
     @GetMapping("/email/check")
     public ResponseEntity<ApiResponse<?>> checkEmail(@Email @RequestParam String email) {
@@ -85,6 +81,23 @@ public class MemberController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
+    @PostMapping("/signup")
+    public ApiResponse<?> signUpWithTermAgreement(@UserContext MemberDto memberDto,
+                                                  @RequestBody List<TermAgreementDto> agreements) {
+        termService.agreeTerms(
+                memberDto.getMemberId(),
+                agreements.stream()
+                        .map(dto -> new TermAgreementRequestDto(dto.getTermId(), dto.getIsAgreed()))
+                        .toList()
+        );
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @DeleteMapping("/signup")
+    public ApiResponse<?> signUpCancel(@UserContext MemberDto memberDto) {
+        memberService.deleteByMemberId(memberDto.getMemberId());
+        return ApiResponse.createSuccessWithNoContent();
+    }
 
     @Data
     @AllArgsConstructor
@@ -104,6 +117,13 @@ public class MemberController {
         private String originPassword;
         private String newPassword;
         private String confirmPassword;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class TermAgreementDto {
+        private Long termId;
+        private Boolean isAgreed;
     }
 
 }
