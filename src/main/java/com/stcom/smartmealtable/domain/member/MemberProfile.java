@@ -1,6 +1,5 @@
 package com.stcom.smartmealtable.domain.member;
 
-import com.stcom.smartmealtable.domain.Address.Address;
 import com.stcom.smartmealtable.domain.Address.AddressEntity;
 import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.group.Group;
@@ -60,8 +59,11 @@ public class MemberProfile extends BaseTimeEntity {
         this.group = group;
     }
 
-    public void addAddress(Address address) {
-        addressHistory.add(new AddressEntity(address));
+    public void addAddress(AddressEntity addressEntity) {
+        addressHistory.add(addressEntity);
+        if (addressHistory.size() == 1) {
+            setPrimaryAddress(addressEntity);
+        }
     }
 
     public void removeAddress(AddressEntity addressEntity) {
@@ -73,6 +75,11 @@ public class MemberProfile extends BaseTimeEntity {
                 .filter(AddressEntity::isPrimaryAddress)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Primary Address가 없습니다"));
+    }
+
+    public void setPrimaryAddress(AddressEntity target) {
+        addressHistory.forEach(AddressEntity::unmarkPrimary);
+        target.markPrimary();
     }
 
     public void linkMember(Member member) {
@@ -91,10 +98,6 @@ public class MemberProfile extends BaseTimeEntity {
         this.type = memberType;
     }
 
-    public void setPrimaryAddress(AddressEntity target) {
-        addressHistory.forEach(AddressEntity::unmarkPrimary);
-        target.markPrimary();
-    }
 
     public void changeGroup(Group newGroup) {
         this.group = newGroup;
