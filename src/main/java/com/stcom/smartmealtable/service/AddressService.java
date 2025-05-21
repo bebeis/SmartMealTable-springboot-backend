@@ -1,6 +1,6 @@
 package com.stcom.smartmealtable.service;
 
-import com.stcom.smartmealtable.repository.AddressRepository;
+import com.stcom.smartmealtable.repository.AddressEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,5 +8,5 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AddressService {
 
-    private final AddressRepository addressRepository;
+    private final AddressEntityRepository addressEntityRepository;
 }

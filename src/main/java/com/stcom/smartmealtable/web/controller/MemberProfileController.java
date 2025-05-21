@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +46,11 @@ public class MemberProfileController {
         memberProfileService.changeProfile(memberDto.getProfileId(), request.getNickName(), request.getMemberType(),
                 request.getGroupId());
         return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @PostMapping("/addresses/{id}/primary")
+    public ApiResponse<?> changePrimaryAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
+        memberProfileService.changeAddressToPrimary(memberDto.getProfileId(), addressId);
     }
 
     @AllArgsConstructor

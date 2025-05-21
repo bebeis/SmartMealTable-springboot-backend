@@ -1,9 +1,11 @@
 package com.stcom.smartmealtable.service;
 
+import com.stcom.smartmealtable.domain.Address.AddressEntity;
 import com.stcom.smartmealtable.domain.group.Group;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
 import com.stcom.smartmealtable.domain.member.MemberType;
+import com.stcom.smartmealtable.repository.AddressEntityRepository;
 import com.stcom.smartmealtable.repository.GroupRepository;
 import com.stcom.smartmealtable.repository.MemberProfileRepository;
 import com.stcom.smartmealtable.repository.MemberRepository;
@@ -18,6 +20,7 @@ public class MemberProfileService {
     private final MemberProfileRepository memberProfileRepository;
     private final GroupRepository groupRepository;
     private final MemberRepository memberRepository;
+    private final AddressEntityRepository addressEntityRepository;
 
     public MemberProfile getProfileFetch(Long profileId) {
         return memberProfileRepository.findMemberProfileEntityGraphById(profileId)
@@ -55,5 +58,14 @@ public class MemberProfileService {
                 ? groupRepository.getReferenceById(groupId)
                 : null;
         profile.changeGroup(newGroup);
+    }
+
+    @Transactional
+    public void changeAddressToPrimary(Long profileId, Long addressId) {
+        MemberProfile profile = memberProfileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
+        AddressEntity targetAddressEntity = addressEntityRepository.findById(addressId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 주소 정보입니다."));
+        profile.setPrimaryAddress(targetAddressEntity);
     }
 }

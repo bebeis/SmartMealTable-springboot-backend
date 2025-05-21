@@ -3,7 +3,7 @@ package com.stcom.smartmealtable.service;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
 import com.stcom.smartmealtable.exception.PasswordPolicyException;
-import com.stcom.smartmealtable.repository.AddressRepository;
+import com.stcom.smartmealtable.repository.AddressEntityRepository;
 import com.stcom.smartmealtable.repository.MemberProfileRepository;
 import com.stcom.smartmealtable.repository.MemberRepository;
 import com.stcom.smartmealtable.repository.SocialAccountRepository;
@@ -18,7 +18,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
     private final SocialAccountRepository socialAccountRepository;
-    private final AddressRepository addressRepository;
+    private final AddressEntityRepository addressEntityRepository;
 
     public void validateDuplicatedEmail(String email) {
         memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 이메일 입니다"));
