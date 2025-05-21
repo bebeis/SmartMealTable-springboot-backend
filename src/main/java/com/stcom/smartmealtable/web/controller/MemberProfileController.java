@@ -1,8 +1,11 @@
 package com.stcom.smartmealtable.web.controller;
 
 import com.stcom.smartmealtable.domain.Address.Address;
+import com.stcom.smartmealtable.domain.Address.AddressType;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
 import com.stcom.smartmealtable.domain.member.MemberType;
+import com.stcom.smartmealtable.infrastructure.AddressApiService;
+import com.stcom.smartmealtable.infrastructure.dto.AddressRequest;
 import com.stcom.smartmealtable.service.MemberProfileService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberProfileController {
 
     private final MemberProfileService memberProfileService;
+    private final AddressApiService addressApiService;
 
     @GetMapping("/me")
     public ApiResponse<?> getMemberProfilePageInfo(@UserContext MemberDto memberDto) {
@@ -54,6 +58,14 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
+    @PostMapping("/addresses")
+    public ApiResponse<?> registerAddress(@UserContext MemberDto memberDto, AddressCURequest request) {
+        Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
+        memberProfileService.saveNewAddress(memberDto.getProfileId(), address, request.getAlias(),
+                request.getAddressType());
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
     @AllArgsConstructor
     @Data
     static class MemberProfilePageResponse {
@@ -79,6 +91,19 @@ public class MemberProfileController {
         private String nickName;
         private Long groupId;
         private MemberType memberType;
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class AddressCURequest {
+        private String roadAddress;
+        private AddressType addressType;
+        private String alias;
+        private String detailAddress;
+
+        public AddressRequest toAddressApiRequest() {
+            return new AddressRequest(roadAddress, alias, detailAddress);
+        }
     }
 
 }

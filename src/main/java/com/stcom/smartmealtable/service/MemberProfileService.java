@@ -1,6 +1,8 @@
 package com.stcom.smartmealtable.service;
 
+import com.stcom.smartmealtable.domain.Address.Address;
 import com.stcom.smartmealtable.domain.Address.AddressEntity;
+import com.stcom.smartmealtable.domain.Address.AddressType;
 import com.stcom.smartmealtable.domain.group.Group;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
@@ -68,5 +70,18 @@ public class MemberProfileService {
         AddressEntity targetAddressEntity = addressEntityRepository.findById(addressId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 주소 정보입니다."));
         profile.setPrimaryAddress(targetAddressEntity);
+    }
+
+    @Transactional
+    public void saveNewAddress(Long profileId, Address address, String alias, AddressType addressType) {
+        MemberProfile profile = memberProfileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
+        AddressEntity addressEntity = AddressEntity.builder()
+                .address(address)
+                .alias(alias)
+                .type(addressType)
+                .build();
+        addressEntityRepository.save(addressEntity);
+        profile.addAddress(addressEntity);
     }
 }
