@@ -45,7 +45,7 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @PatchMapping
+    @PatchMapping("/me")
     public ApiResponse<?> changeMemberProfile(@UserContext MemberDto memberDto,
                                               @Validated @RequestBody MemberProfileRequest request) {
         memberProfileService.changeProfile(memberDto.getProfileId(), request.getNickName(), request.getMemberType(),
