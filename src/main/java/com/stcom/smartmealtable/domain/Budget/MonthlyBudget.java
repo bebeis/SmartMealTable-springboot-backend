@@ -1,6 +1,6 @@
 package com.stcom.smartmealtable.domain.Budget;
 
-import com.stcom.smartmealtable.domain.member.Member;
+import com.stcom.smartmealtable.domain.member.MemberProfile;
 import com.stcom.smartmealtable.infrastructure.persistence.YearMonthConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MonthlyBudget extends Budget {
 
-    public MonthlyBudget(Member member, BigDecimal limit,
+    public MonthlyBudget(MemberProfile memberProfile, BigDecimal limit,
                          YearMonth yearMonth) {
-        super(member, limit);
+        super(memberProfile, limit);
         this.yearMonth = yearMonth;
     }
 

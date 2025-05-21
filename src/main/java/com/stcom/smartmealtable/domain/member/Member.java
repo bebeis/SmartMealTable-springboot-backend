@@ -3,15 +3,12 @@ package com.stcom.smartmealtable.domain.member;
 import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
 import com.stcom.smartmealtable.exception.PasswordPolicyException;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
@@ -36,11 +33,11 @@ public class Member extends BaseTimeEntity {
 
     private String fullName;
 
+
     // TODO: 이메일 인증 기능 구현해야함
     private boolean isEmailVerified = true;
 
-    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_profile_id")
+    @OneToOne(mappedBy = "member")
     private MemberProfile memberProfile;
 
     public Member(String email) {
@@ -54,9 +51,8 @@ public class Member extends BaseTimeEntity {
         this.password = new MemberPassword(rawPassword);
     }
 
-    public void registerMemberProfile(MemberProfile profile) {
-        memberProfile = profile;
-        profile.linkMemberAuth(this);
+    protected void linkMemberProfile(MemberProfile profile) {
+        this.memberProfile = profile;
     }
 
     public void changePassword(String rawOldPassword, String rawNewPassword)
@@ -77,6 +73,10 @@ public class Member extends BaseTimeEntity {
 
     public void verifyEmail() {
         this.isEmailVerified = true;
+    }
+
+    public boolean isProfileRegistered() {
+        return memberProfile == null;
     }
 
 

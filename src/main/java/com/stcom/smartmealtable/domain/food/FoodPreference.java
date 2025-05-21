@@ -1,7 +1,7 @@
 package com.stcom.smartmealtable.domain.food;
 
 import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
-import com.stcom.smartmealtable.domain.member.Member;
+import com.stcom.smartmealtable.domain.member.MemberProfile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,8 +27,8 @@ public class FoodPreference extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "member_profile_id")
+    private MemberProfile memberProfile;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
@@ -39,8 +39,8 @@ public class FoodPreference extends BaseTimeEntity {
     private Double weight;
 
     @Builder
-    public FoodPreference(Member member, FoodCategory category, boolean isPreferred, Double weight) {
-        this.member = member;
+    public FoodPreference(MemberProfile memberProfile, FoodCategory category, boolean isPreferred, Double weight) {
+        this.memberProfile = memberProfile;
         this.category = category;
         this.isPreferred = isPreferred;
         this.weight = weight;

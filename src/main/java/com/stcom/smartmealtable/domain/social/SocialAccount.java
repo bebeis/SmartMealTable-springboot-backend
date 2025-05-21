@@ -58,4 +58,8 @@ public class SocialAccount extends BaseTimeEntity {
         this.refreshToken = refreshToken;
         this.tokenExpiresAt = tokenExpiresAt;
     }
+
+    public boolean isProfileRegistered() {
+        return member.isProfileRegistered();
+    }
 }

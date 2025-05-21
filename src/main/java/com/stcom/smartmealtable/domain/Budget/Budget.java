@@ -1,7 +1,7 @@
 package com.stcom.smartmealtable.domain.Budget;
 
 import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
-import com.stcom.smartmealtable.domain.member.Member;
+import com.stcom.smartmealtable.domain.member.MemberProfile;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -29,16 +29,16 @@ public abstract class Budget extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "member_profile_id")
+    private MemberProfile memberProfile;
 
     private BigDecimal spendAmount = BigDecimal.ZERO;
 
     @Column(name = "budget_limit")
     private BigDecimal limit;
 
-    protected Budget(Member member, BigDecimal limit) {
-        this.member = member;
+    protected Budget(MemberProfile memberProfile, BigDecimal limit) {
+        this.memberProfile = memberProfile;
         this.limit = limit;
     }
 
