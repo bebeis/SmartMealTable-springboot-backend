@@ -66,6 +66,15 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
+    @PatchMapping("/addresses/{id}")
+    public ApiResponse<?> changeAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId,
+                                        AddressCURequest request) {
+        Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
+        memberProfileService.changeAddress(memberDto.getProfileId(), addressId, address, request.getAlias(),
+                request.getAddressType());
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
     @AllArgsConstructor
     @Data
     static class MemberProfilePageResponse {

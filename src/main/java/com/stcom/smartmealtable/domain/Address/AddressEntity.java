@@ -66,4 +66,7 @@ public class AddressEntity {
     }
 
 
+    public void changeAddress(Address newAddress) {
+        this.address = newAddress;
+    }
 }

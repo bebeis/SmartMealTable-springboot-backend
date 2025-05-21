@@ -84,4 +84,14 @@ public class MemberProfileService {
         addressEntityRepository.save(addressEntity);
         profile.addAddress(addressEntity);
     }
+
+    @Transactional
+    public void changeAddress(Long profileId, Long addressEntityId, Address address, String alias,
+                              AddressType addressType) {
+        MemberProfile profile = memberProfileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
+        AddressEntity addressEntity = addressEntityRepository.findById(addressEntityId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 주소 정보입니다."));
+        profile.changeAddress(addressEntity, address, alias, addressType);
+    }
 }

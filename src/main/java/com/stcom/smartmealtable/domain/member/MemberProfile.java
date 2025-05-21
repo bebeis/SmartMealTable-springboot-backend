@@ -1,6 +1,8 @@
 package com.stcom.smartmealtable.domain.member;
 
+import com.stcom.smartmealtable.domain.Address.Address;
 import com.stcom.smartmealtable.domain.Address.AddressEntity;
+import com.stcom.smartmealtable.domain.Address.AddressType;
 import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.group.Group;
 import jakarta.persistence.CascadeType;
@@ -80,6 +82,16 @@ public class MemberProfile extends BaseTimeEntity {
     public void setPrimaryAddress(AddressEntity target) {
         addressHistory.forEach(AddressEntity::unmarkPrimary);
         target.markPrimary();
+    }
+
+    public void changeAddress(AddressEntity target, Address address, String alias,
+                              AddressType addressType) {
+        AddressEntity entity = addressHistory.stream()
+                .filter(addressEntity -> addressEntity.equals(target))
+                .findFirst().orElseThrow(() -> new IllegalStateException("해당 회원의 주소 엔티티가 아닙니다"));
+        entity.changeAddressType(addressType);
+        entity.changeAlias(alias);
+        entity.changeAddress(address);
     }
 
     public void linkMember(Member member) {
