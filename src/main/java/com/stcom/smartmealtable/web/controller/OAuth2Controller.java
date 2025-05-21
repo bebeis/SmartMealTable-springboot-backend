@@ -1,12 +1,14 @@
-package com.stcom.smartmealtable.web.auth;
+package com.stcom.smartmealtable.web.controller;
 
 
 import com.stcom.smartmealtable.infrastructure.SocialAuthService;
 import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
 import com.stcom.smartmealtable.infrastructure.dto.TokenDto;
 import com.stcom.smartmealtable.security.JwtTokenService;
-import com.stcom.smartmealtable.service.MemberService;
-import com.stcom.smartmealtable.service.SocialAccountService;
+import com.stcom.smartmealtable.service.LoginService;
+import com.stcom.smartmealtable.service.dto.AuthResultDto;
+import com.stcom.smartmealtable.service.dto.MemberDto;
+import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -24,39 +26,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OAuth2Controller {
 
-    private final SocialAuthService socialManager;
-    private final SocialAccountService socialAccountService;
     private final JwtTokenService jwtTokenService;
     private final SocialAuthService socialAuthService;
-    private final MemberService memberService;
+    private final LoginService loginService;
 
     @PostMapping("/oauth2/code")
     public ApiResponse<JwtTokenResponseDto> getTokenFromSocial(@RequestBody JwtTokenRequest request) {
-        log.info("request = {}", request);
-        TokenDto token = socialAuthService.getTokenResponse(request.getProvider().toLowerCase(),
-                request.getAuthorizationCode());
-        log.info("response 성공 = {}", token);
-        boolean isNewMember = memberService.isNewMember(token.getEmail());
-        boolean isSocialNewUser = socialAccountService.isNewUser(token.getProvider(),
-                token.getProviderUserId());
-        if (isNewMember && isSocialNewUser) { // 소셜, 회원 모두 신규
-            socialAccountService.createNewMemberAndLinkSocialAccount(token);
-        } else if (isSocialNewUser) { // 소셜만 신규, 회원은 존재
-            socialAccountService.linkSocialAccount(token);
+        TokenDto token = socialAuthService.getTokenResponse(
+                request.getProvider().toLowerCase(), request.getAuthorizationCode());
+        AuthResultDto authResultDto = loginService.socialLogin(token);
+        JwtTokenResponseDto jwtDto =
+                jwtTokenService.createTokenDto(authResultDto.getMemberId(), authResultDto.getProfileId());
+        if (authResultDto.isNewUser()) {
+            jwtDto.setNewUser(true);
         }
-
-        JwtTokenResponseDto tokenDto = jwtTokenService.createTokenDto(
-                socialAccountService.findMemberId(token.getProvider(), token.getProviderUserId()));
-        tokenDto.setNewUser(isSocialNewUser);
-        log.info("response = {}", tokenDto);
-        return ApiResponse.createSuccess(tokenDto);
+        return ApiResponse.createSuccess(jwtDto);
     }
 
     @PostMapping("/api/v1/auth/token/refresh")
-    public ApiResponse<JwtRefreshedAccessTokenDto> refreshAccessToken(@RequestBody JwtRefreshTokenRequest request) {
-        String memberId = jwtTokenService.extractMemberIdFromRefreshToken(request.getRefreshToken());
-        String accessToken = jwtTokenService.createAccessToken(memberId);
-
+    public ApiResponse<JwtRefreshedAccessTokenDto> refreshAccessToken(@UserContext MemberDto memberDto,
+                                                                      @RequestBody JwtRefreshTokenRequest request) {
+        String accessToken = jwtTokenService.createAccessToken(memberDto.getMemberId(), memberDto.getProfileId());
         return ApiResponse.createSuccess(
                 new JwtRefreshedAccessTokenDto(accessToken, 3600, "Bearar")
         );

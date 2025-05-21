@@ -1,9 +1,12 @@
 package com.stcom.smartmealtable.service;
 
 import com.stcom.smartmealtable.domain.member.Member;
-import com.stcom.smartmealtable.domain.member.MemberProfile;
+import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
+import com.stcom.smartmealtable.exception.PasswordPolicyException;
+import com.stcom.smartmealtable.repository.AddressRepository;
 import com.stcom.smartmealtable.repository.MemberProfileRepository;
 import com.stcom.smartmealtable.repository.MemberRepository;
+import com.stcom.smartmealtable.repository.SocialAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,14 +17,21 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
+    private final SocialAccountRepository socialAccountRepository;
+    private final AddressRepository addressRepository;
 
     public void validateDuplicatedEmail(String email) {
-        memberRepository.findMemberByEmail(email).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 이메일 입니다"));
+        memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 이메일 입니다"));
     }
 
     @Transactional
     public void saveMember(Member member) {
         memberRepository.save(member);
+    }
+
+    public Member findMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
     }
 
     public void checkPasswordDoubly(String password, String confirmPassword) {
@@ -30,19 +40,18 @@ public class MemberService {
         }
     }
 
-    @Transactional
-    public void linkMember(Long id, MemberProfile profile) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다"));
-        member.registerMemberProfile(profile);
+    public void changePassword(Long memberId, String originPassword, String newPassword)
+            throws PasswordFailedExceededException, PasswordPolicyException {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalStateException("회원이 존재하지 않습니다"));
+        findMember.changePassword(originPassword, newPassword);
     }
 
-    public MemberProfile findMemberProfileByMemberId(Long memberId) {
-        return memberProfileRepository.findMemberProfileByMemberId(memberId)
-                .orElseThrow(() -> new IllegalStateException("프로필이 없는 유저를 조회하였습니다."));
-
-    }
-
-    public boolean isNewMember(String email) {
-        return memberRepository.findMemberByEmail(email).isEmpty();
+    public void deleteByMemberId(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalStateException("회원이 존재하지 않습니다"));
+        memberProfileRepository.deleteMemberProfileByMember(member);
+        socialAccountRepository.deleteSocialAccountByMember(member);
+        memberRepository.delete(member);
     }
 }

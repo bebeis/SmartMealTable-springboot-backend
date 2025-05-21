@@ -3,6 +3,7 @@ package com.stcom.smartmealtable.security;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
 import com.stcom.smartmealtable.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -24,24 +25,27 @@ public class JwtTokenService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public String createAccessToken(Long memberId) {
-        return createToken(String.valueOf(memberId), 1000 * 60 * 60);
+    public String createAccessToken(Long memberId, Long profileId) {
+        return createToken(String.valueOf(memberId), profileId, 1000 * 60 * 60);
     }
 
-    public String createAccessToken(String memberId) {
-        return createToken(memberId, 1000 * 60 * 60);
+    public String createRefreshToken(Long memberId, Long profileId) {
+        return createToken(String.valueOf(memberId), profileId, 1000 * 60 * 60 * 24 * 14);
     }
 
-    public String createRefreshToken(Long memberId) {
-        return createToken(String.valueOf(memberId), 1000 * 60 * 60 * 24 * 14);
-    }
-
-    private String createToken(String memberId, long expireTime) {
+    private String createToken(String memberId, Long profileId, long expireTime) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + expireTime);
 
+        Member member = memberRepository.findById(Long.parseLong(memberId))
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("memberId", memberId);
+        claims.put("email", member.getEmail());
+        if (profileId != null) {
+            claims.put("profileId", String.valueOf(profileId));
+        }
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -51,26 +55,13 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public JwtTokenResponseDto createTokenDto(Long memberId) {
+    public JwtTokenResponseDto createTokenDto(Long memberId, Long profileId) {
         return new JwtTokenResponseDto(
-                createAccessToken(memberId),
-                createRefreshToken(memberId),
+                createAccessToken(memberId, profileId),
+                createRefreshToken(memberId, profileId),
                 3600,
-                "Bearar"
+                "Bearer"
         );
-    }
-
-    public String extractMemberIdFromRefreshToken(String refreshToken) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-                    .build()
-                    .parseClaimsJws(refreshToken)
-                    .getBody()
-                    .get("memberId", String.class);
-        } catch (Exception e) {
-            throw new RuntimeException("유효하지 않은 리프레시 토큰입니다");
-        }
     }
 
     public void validateToken(String token) {
@@ -90,29 +81,16 @@ public class JwtTokenService {
                 .parseClaimsJws(token);
     }
 
-    public Member getClaim(String token) {
-        try {
-            // Bearer 접두사 제거
-            if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            }
-
-            String memberIdStr = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("memberId", String.class);
-
-            Long memberId = Long.parseLong(memberIdStr);
-
-            // 회원 정보 조회
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
-
-            return member;
-        } catch (Exception e) {
-            throw new RuntimeException("토큰 처리 중 오류가 발생했습니다: " + e.getMessage());
+    public Claims extractClaims(String token) {
+        // Bearer 접두사 제거
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
         }
+
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

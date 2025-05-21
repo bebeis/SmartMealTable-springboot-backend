@@ -38,7 +38,7 @@ public class SocialAccountService {
 
     @Transactional
     public void linkSocialAccount(TokenDto tokenDto) {
-        Member member = memberRepository.findMemberByEmail(tokenDto.getEmail())
+        Member member = memberRepository.findByEmail(tokenDto.getEmail())
                 .orElseThrow(() -> new IllegalStateException("회원이 null일 수는 없습니다"));
 
         SocialAccount socialAccount = SocialAccount.builder()
@@ -67,11 +67,6 @@ public class SocialAccountService {
         SocialAccount socialAccount = socialAccountRepository.findById(socialAccountId)
                 .orElseThrow(() -> new IllegalStateException("확인되지 않은 계정입니다"));
         socialAccount.updateToken(accessToken, refreshToken, tokenExpiresAt);
-    }
-
-    public Long findMemberId(String provider, String providerUserId) {
-        return socialAccountRepository.findMemberIdByProviderAndProviderUserId(provider, providerUserId)
-                .orElseThrow(() -> new IllegalStateException("회원 정보가 없습니다. 먼저 회원 정보를 생성해주세요"));
     }
 
     public List<String> findAllProviders(Long memberId) {
