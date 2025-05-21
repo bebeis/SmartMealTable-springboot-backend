@@ -1,6 +1,5 @@
 package com.stcom.smartmealtable.infrastructure.dto;
 
-import com.stcom.smartmealtable.domain.Address.AddressType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,8 +8,6 @@ import lombok.Data;
 public class AddressRequest {
 
     private String roadAddress;
-
-    private AddressType addressType;
 
     private String alias;
 

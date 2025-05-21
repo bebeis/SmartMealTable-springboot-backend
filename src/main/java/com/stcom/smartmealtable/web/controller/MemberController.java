@@ -3,7 +3,7 @@ package com.stcom.smartmealtable.web.controller;
 import com.stcom.smartmealtable.domain.member.Member;
 import com.stcom.smartmealtable.exception.PasswordFailedExceededException;
 import com.stcom.smartmealtable.exception.PasswordPolicyException;
-import com.stcom.smartmealtable.infrastructure.AddressApiService;
+import com.stcom.smartmealtable.infrastructure.KakaoAddressApiService;
 import com.stcom.smartmealtable.infrastructure.dto.JwtTokenResponseDto;
 import com.stcom.smartmealtable.security.JwtTokenService;
 import com.stcom.smartmealtable.service.BudgetService;
@@ -40,7 +40,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final JwtTokenService jwtTokenService;
-    private final AddressApiService addressApiService;
+    private final KakaoAddressApiService addressApiService;
     private final BudgetService budgetService;
     private final SocialAccountService socialAccountService;
     private final FoodPreferenceService foodPreferenceService;
