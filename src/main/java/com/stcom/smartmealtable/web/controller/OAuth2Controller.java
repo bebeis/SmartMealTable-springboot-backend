@@ -43,7 +43,7 @@ public class OAuth2Controller {
         return ApiResponse.createSuccess(jwtDto);
     }
 
-    @PostMapping("/api/v1/auth/token/refresh")
+    @PostMapping("/token/refresh")
     public ApiResponse<JwtRefreshedAccessTokenDto> refreshAccessToken(@UserContext MemberDto memberDto,
                                                                       @RequestBody JwtRefreshTokenRequest request) {
         String accessToken = jwtTokenService.createAccessToken(memberDto.getMemberId(), memberDto.getProfileId());
