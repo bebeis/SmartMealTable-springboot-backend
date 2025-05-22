@@ -92,4 +92,19 @@ class MemberTest {
         // then
         assertThat(member.isEmailVerified()).isTrue();
     }
+
+    @Test
+    @DisplayName("회원 비밀번호 연속 실패 5회까지는 false 반환하고, 6회 시 예외 발생해야 한다")
+    void 비밀번호_연속_실패_제한_초과() throws PasswordPolicyException, PasswordFailedExceededException {
+        Member member = Member.builder()
+                .email("test@example.com")
+                .fullName("홍길동")
+                .rawPassword("Password123!")
+                .build();
+        for (int i = 0; i < 5; i++) {
+            assertThat(member.isMatchedPassword("WrongPassword")).isFalse();
+        }
+        assertThatThrownBy(() -> member.isMatchedPassword("WrongPassword"))
+                .isInstanceOf(PasswordFailedExceededException.class);
+    }
 } 
