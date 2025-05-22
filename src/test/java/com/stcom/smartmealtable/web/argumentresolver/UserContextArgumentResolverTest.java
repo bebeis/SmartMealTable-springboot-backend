@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
 import com.stcom.smartmealtable.security.JwtTokenService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
@@ -40,7 +41,7 @@ class UserContextArgumentResolverTest {
 
     @BeforeEach
     void setUp() {
-        when(webRequest.getNativeRequest(HttpServletRequest.class)).thenReturn(httpServletRequest);
+        lenient().when(webRequest.getNativeRequest(HttpServletRequest.class)).thenReturn(httpServletRequest);
     }
 
     @Test
@@ -62,7 +63,6 @@ class UserContextArgumentResolverTest {
     void doesNotSupportParameterWithoutAnnotation() {
         // given
         when(methodParameter.hasParameterAnnotation(UserContext.class)).thenReturn(false);
-        when(methodParameter.getParameterType()).thenReturn((Class) MemberDto.class);
 
         // when
         boolean result = resolver.supportsParameter(methodParameter);
