@@ -20,7 +20,7 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping()
-    public ApiResponse<?> searchGroup(@RequestParam String keyword) {
+    public ApiResponse<List<GroupDto>> searchGroup(@RequestParam String keyword) {
         if (keyword.isBlank()) {
             return ApiResponse.createError("키워드가 비어있습니다. 키워드를 입력해주세요");
         }

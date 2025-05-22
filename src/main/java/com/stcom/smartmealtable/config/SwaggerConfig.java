@@ -1,6 +1,7 @@
 package com.stcom.smartmealtable.config;
 
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
+import com.stcom.smartmealtable.web.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -34,7 +35,8 @@ import org.springframework.core.MethodParameter;
 public class SwaggerConfig {
 
     static {
-        SpringDocUtils.getConfig().addAnnotationsToIgnore(UserContext.class);
+        SpringDocUtils.getConfig().addAnnotationsToIgnore(UserContext.class)
+                .addResponseWrapperToIgnore(ApiResponse.class);
     }
 
     @Bean

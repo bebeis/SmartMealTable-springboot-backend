@@ -26,12 +26,12 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SUCCESS_STATUS, null, data);
     }
 
-    public static ApiResponse<?> createSuccessWithNoContent() {
+    public static <T> ApiResponse<T> createSuccessWithNoContent() {
         return new ApiResponse<>(SUCCESS_STATUS, null, null);
     }
 
     // Hibernate Validator에 의해 유효하지 않은 데이터로 인해 API 호출이 거부될때 반환
-    public static ApiResponse<?> createFail(BindingResult bindingResult) {
+    public static ApiResponse<Map<String, String>> createFail(BindingResult bindingResult) {
         Map<String, String> errors = new HashMap<>();
 
         List<ObjectError> allErrors = bindingResult.getAllErrors();
@@ -46,7 +46,7 @@ public class ApiResponse<T> {
     }
 
     // 예외 발생으로 API 호출 실패시 반환
-    public static ApiResponse<?> createError(String message) {
+    public static <T> ApiResponse<T> createError(String message) {
         return new ApiResponse<>(ERROR_STATUS, message, null);
     }
 

@@ -39,13 +39,13 @@ public class MemberProfileController {
     private final BudgetService budgetService;
 
     @GetMapping("/me")
-    public ApiResponse<?> getMemberProfilePageInfo(@UserContext MemberDto memberDto) {
+    public ApiResponse<MemberProfilePageResponse> getMemberProfilePageInfo(@UserContext MemberDto memberDto) {
         MemberProfile profile = memberProfileService.getProfileFetch(memberDto.getProfileId());
         return ApiResponse.createSuccess(new MemberProfilePageResponse(profile, memberDto));
     }
 
     @PostMapping()
-    public ApiResponse<?> createMemberProfile(@UserContext MemberDto memberDto,
+    public ApiResponse<Void> createMemberProfile(@UserContext MemberDto memberDto,
                                               @Validated @RequestBody MemberProfileRequest request) {
         memberProfileService.createProfile(request.getNickName(), memberDto.getMemberId(), request.getMemberType(),
                 request.getGroupId());
@@ -53,7 +53,7 @@ public class MemberProfileController {
     }
 
     @PatchMapping("/me")
-    public ApiResponse<?> changeMemberProfile(@UserContext MemberDto memberDto,
+    public ApiResponse<Void> changeMemberProfile(@UserContext MemberDto memberDto,
                                               @Validated @RequestBody MemberProfileRequest request) {
         memberProfileService.changeProfile(memberDto.getProfileId(), request.getNickName(), request.getMemberType(),
                 request.getGroupId());
@@ -61,13 +61,13 @@ public class MemberProfileController {
     }
 
     @PostMapping("/me/addresses/{id}/primary")
-    public ApiResponse<?> changePrimaryAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
+    public ApiResponse<Void> changePrimaryAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
         memberProfileService.changeAddressToPrimary(memberDto.getProfileId(), addressId);
         return ApiResponse.createSuccessWithNoContent();
     }
 
     @PostMapping("/me/addresses")
-    public ApiResponse<?> registerAddress(@UserContext MemberDto memberDto, AddressCURequest request) {
+    public ApiResponse<Void> registerAddress(@UserContext MemberDto memberDto, AddressCURequest request) {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
         memberProfileService.saveNewAddress(memberDto.getProfileId(), address, request.getAlias(),
                 request.getAddressType());
@@ -75,7 +75,7 @@ public class MemberProfileController {
     }
 
     @PatchMapping("/me/addresses/{id}")
-    public ApiResponse<?> changeAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId,
+    public ApiResponse<Void> changeAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId,
                                         AddressCURequest request) {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
         memberProfileService.changeAddress(memberDto.getProfileId(), addressId, address, request.getAlias(),
@@ -84,13 +84,13 @@ public class MemberProfileController {
     }
 
     @DeleteMapping("/me/addresses/{id}")
-    public ApiResponse<?> deleteAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
+    public ApiResponse<Void> deleteAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
         memberProfileService.deleteAddress(memberDto.getProfileId(), addressId);
         return ApiResponse.createSuccessWithNoContent();
     }
 
     @GetMapping("/me/preferences")
-    public ApiResponse<?> getCategoryPreferences(@UserContext MemberDto memberDto) {
+    public ApiResponse<PreferencesResponse> getCategoryPreferences(@UserContext MemberDto memberDto) {
         List<MemberCategoryPreference> preferences =
                 memberCategoryPreferenceService.getPreferences(memberDto.getProfileId());
 
@@ -114,7 +114,7 @@ public class MemberProfileController {
     }
 
     @PostMapping("/me/preferences")
-    public ApiResponse<?> saveCategoryPreferences(@UserContext MemberDto memberDto,
+    public ApiResponse<Void> saveCategoryPreferences(@UserContext MemberDto memberDto,
                                                   @RequestBody PreferencesRequest request) {
         memberCategoryPreferenceService.savePreferences(
                 memberDto.getProfileId(),
@@ -124,7 +124,7 @@ public class MemberProfileController {
     }
 
     @PostMapping("/me/budgets")
-    public ApiResponse<?> createDefaultBudgets(@UserContext MemberDto memberDto,
+    public ApiResponse<Void> createDefaultBudgets(@UserContext MemberDto memberDto,
                                                @RequestBody BudgetRequest budgetRequest) {
         memberProfileService.registerDefaultBudgets(memberDto.getProfileId(), budgetRequest.getDailyLimit(),
                 budgetRequest.getMonthlyLimit());

@@ -30,7 +30,7 @@ public class LoginController {
     private final JwtBlacklistService jwtBlacklistService;
 
     @PostMapping("/login")
-    public ApiResponse<?> login(@Validated @RequestBody LoginRequest request)
+    public ApiResponse<JwtTokenResponseDto> login(@Validated @RequestBody LoginRequest request)
             throws PasswordFailedExceededException {
         AuthResultDto authResultDto = loginService.loginWithEmail(request.getEmail(), request.getPassword());
         JwtTokenResponseDto jwtTokenResponseDto =
@@ -42,7 +42,7 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public ApiResponse<?> logout(HttpServletRequest request) {
+    public ApiResponse<Void> logout(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization");
         jwtBlacklistService.addToBlacklist(jwt);
         return ApiResponse.createSuccessWithNoContent();

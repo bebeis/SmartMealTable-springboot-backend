@@ -42,14 +42,14 @@ public class MemberController {
     private final TermService termService;
 
     @GetMapping("/email/check")
-    public ResponseEntity<ApiResponse<?>> checkEmail(@Email @RequestParam String email) {
+    public ResponseEntity<ApiResponse<Void>> checkEmail(@Email @RequestParam String email) {
         memberService.validateDuplicatedEmail(email);
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent());
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
-    public ApiResponse<?> createMember(@Valid @RequestBody CreateMemberRequest request,
+    public ApiResponse<JwtTokenResponseDto> createMember(@Valid @RequestBody CreateMemberRequest request,
                                        BindingResult bindingResult) throws PasswordPolicyException {
         memberService.validateDuplicatedEmail(request.getEmail());
         memberService.checkPasswordDoubly(request.getPassword(), request.getConfirmPassword());
@@ -67,7 +67,7 @@ public class MemberController {
     }
 
     @PatchMapping("/me")
-    public ApiResponse<?> editMember(@UserContext MemberDto memberDto, @Valid @RequestBody EditMemberRequest request,
+    public ApiResponse<Void> editMember(@UserContext MemberDto memberDto, @Valid @RequestBody EditMemberRequest request,
                                      BindingResult bindingResult)
             throws PasswordPolicyException, PasswordFailedExceededException {
         memberService.checkPasswordDoubly(request.getNewPassword(), request.getConfirmPassword());
@@ -76,13 +76,13 @@ public class MemberController {
     }
 
     @DeleteMapping("/me")
-    public ApiResponse<?> deleteMember(@UserContext MemberDto memberDto) {
+    public ApiResponse<Void> deleteMember(@UserContext MemberDto memberDto) {
         memberService.deleteByMemberId(memberDto.getMemberId());
         return ApiResponse.createSuccessWithNoContent();
     }
 
     @PostMapping("/signup")
-    public ApiResponse<?> signUpWithTermAgreement(@UserContext MemberDto memberDto,
+    public ApiResponse<Void> signUpWithTermAgreement(@UserContext MemberDto memberDto,
                                                   @RequestBody List<TermAgreementDto> agreements) {
         termService.agreeTerms(
                 memberDto.getMemberId(),
@@ -94,7 +94,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/signup")
-    public ApiResponse<?> signUpCancel(@UserContext MemberDto memberDto) {
+    public ApiResponse<Void> signUpCancel(@UserContext MemberDto memberDto) {
         memberService.deleteByMemberId(memberDto.getMemberId());
         return ApiResponse.createSuccessWithNoContent();
     }

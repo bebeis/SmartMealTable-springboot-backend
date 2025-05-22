@@ -19,7 +19,7 @@ public class TermController {
     private final TermService termService;
 
     @GetMapping()
-    public ApiResponse<?> getTerms() {
+    public ApiResponse<List<TermResponse>> getTerms() {
         List<Term> result = termService.findAll();
         return ApiResponse.createSuccess(result.stream()
                 .map(TermResponse::new)
