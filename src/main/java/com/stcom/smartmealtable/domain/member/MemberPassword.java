@@ -46,8 +46,8 @@ public class MemberPassword {
             throw new PasswordPolicyException("비밀번호는 최대 20자까지 가능합니다.");
         }
 
-        if (!rawPassword.matches("^[A-Za-z0-9]+$")) {
-            throw new PasswordPolicyException("비밀번호는 영문자(A–Z, a–z)와 숫자(0–9)로만 구성되어야 합니다.");
+        if (!rawPassword.matches("^[\\x21-\\x7E]+$")) {
+            throw new PasswordPolicyException("비밀번호는 영문자, 숫자, 특수문자로만 구성되어야 합니다.");
         }
     }
 

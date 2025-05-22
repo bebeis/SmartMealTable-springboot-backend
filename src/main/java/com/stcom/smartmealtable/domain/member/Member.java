@@ -60,7 +60,7 @@ public class Member extends BaseTimeEntity {
         if (rawOldPassword.isBlank() || rawNewPassword.isBlank()) {
             throw new IllegalArgumentException("빈 비밀번호를 입력했습니다");
         }
-        password.changePassword(rawOldPassword, rawNewPassword);
+        password.changePassword(rawNewPassword, rawOldPassword);
     }
 
     public boolean isMatchedPassword(final String rawPassword) throws PasswordFailedExceededException {
