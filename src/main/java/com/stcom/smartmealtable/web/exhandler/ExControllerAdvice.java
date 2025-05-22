@@ -6,13 +6,24 @@ import com.stcom.smartmealtable.exception.PasswordPolicyException;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RestControllerAdvice
 public class ExControllerAdvice {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<?> processValidationError(MethodArgumentNotValidException exception) {
+        BindingResult bindingResult = exception.getBindingResult();
+        return ApiResponse.createFail(bindingResult);
+    }
+
 
     @ExceptionHandler(PasswordPolicyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -47,6 +58,14 @@ public class ExControllerAdvice {
     public ApiResponse<Object> externApiStatusErrorHandler(ExternApiStatusError e) {
         log.error("[ExternApiStatusError] ex", e);
         return ApiResponse.createError("외부 API 호출 중 오류가 발생했습니다: " + e.getMessage());
+    }
+
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<Object> handleHttpClientErrorBadRequest(HttpClientErrorException.BadRequest e) {
+        log.error("[HttpClientErrorException.BadRequest] ex", e);
+        String responseBody = e.getResponseBodyAsString();
+        return ApiResponse.createError("외부 OAuth 인증 실패: 잘못된 인증 코드입니다. " + responseBody);
     }
 
     @ExceptionHandler(RuntimeException.class)
