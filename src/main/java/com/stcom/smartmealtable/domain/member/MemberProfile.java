@@ -7,8 +7,9 @@ import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.group.Group;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -43,12 +45,18 @@ public class MemberProfile extends BaseTimeEntity {
     @JoinColumn(name = "member_profile_id")
     private List<AddressEntity> addressHistory = new ArrayList<>();
 
-    @Embedded
+    @Enumerated(EnumType.STRING)
     private MemberType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "affiliation_id")
     private Group group;
+
+    @Column(name = "default_monthly_limit")
+    private BigDecimal defaultMonthlyLimit;
+
+    @Column(name = "default_daily_limit")
+    private BigDecimal defaultDailyLimit;
 
 
     @Builder
@@ -124,5 +132,10 @@ public class MemberProfile extends BaseTimeEntity {
 
     public void changeGroup(Group newGroup) {
         this.group = newGroup;
+    }
+
+    public void registerDefaultBudgets(BigDecimal defaultDailyLimit, BigDecimal defaultMonthlyLimit) {
+        this.defaultDailyLimit = defaultDailyLimit;
+        this.defaultMonthlyLimit = defaultMonthlyLimit;
     }
 }
