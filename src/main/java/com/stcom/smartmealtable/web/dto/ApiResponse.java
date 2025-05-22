@@ -26,7 +26,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SUCCESS_STATUS, null, data);
     }
 
-    public static <T> ApiResponse<T> createSuccessWithNoContent() {
+    public static ApiResponse<Void> createSuccessWithNoContent() {
         return new ApiResponse<>(SUCCESS_STATUS, null, null);
     }
 
