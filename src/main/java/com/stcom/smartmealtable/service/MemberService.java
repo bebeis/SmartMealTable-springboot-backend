@@ -21,8 +21,17 @@ public class MemberService {
     private final SocialAccountRepository socialAccountRepository;
     private final AddressEntityRepository addressEntityRepository;
 
+    /**
+     * 이메일 중복 검사를 수행합니다.
+     * 동일한 이메일을 가진 회원이 이미 존재하면 예외를 발생시킵니다.
+     *
+     * @param email 중복 검사할 이메일
+     * @throws IllegalArgumentException 이메일이 이미 존재하는 경우
+     */
     public void validateDuplicatedEmail(String email) {
-        memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 이메일 입니다"));
+        memberRepository.findByEmail(email).ifPresent(member -> {
+            throw new IllegalArgumentException("이미 존재하는 이메일 입니다");
+        });
     }
 
     @Transactional
