@@ -1,6 +1,5 @@
 package com.stcom.smartmealtable.domain.food;
 
-import com.stcom.smartmealtable.domain.common.BaseTimeEntity;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,44 +11,47 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
+@Table
 @NoArgsConstructor
-public class FoodPreference extends BaseTimeEntity {
+@Getter
+public class MemberCategoryPreference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "food_preference_id")
+    @Column(name = "member_category_preference_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_profile_id")
     private MemberProfile memberProfile;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "category")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "food_category_id")
     private FoodCategory category;
 
-    private boolean isPreferred;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PreferenceType type;  // LIKE or DISLIKE
+
+    @Column(nullable = false)
+    private Integer priority;
 
     private Double weight;
 
     @Builder
-    public FoodPreference(MemberProfile memberProfile, FoodCategory category, boolean isPreferred, Double weight) {
+    public MemberCategoryPreference(MemberProfile memberProfile,
+                                    FoodCategory category,
+                                    PreferenceType type,
+                                    Integer priority) {
         this.memberProfile = memberProfile;
         this.category = category;
-        this.isPreferred = isPreferred;
-        this.weight = weight;
+        this.type = type;
+        this.priority = priority;
     }
-
-
-    public void updatePreference(boolean isPreferred, Double weight) {
-        this.isPreferred = isPreferred;
-        this.weight = weight;
-    }
-
 }
