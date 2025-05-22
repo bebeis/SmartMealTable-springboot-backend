@@ -2,14 +2,19 @@ package com.stcom.smartmealtable.web.controller;
 
 import com.stcom.smartmealtable.domain.Address.Address;
 import com.stcom.smartmealtable.domain.Address.AddressType;
+import com.stcom.smartmealtable.domain.food.MemberCategoryPreference;
+import com.stcom.smartmealtable.domain.food.PreferenceType;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
 import com.stcom.smartmealtable.domain.member.MemberType;
 import com.stcom.smartmealtable.infrastructure.AddressApiService;
 import com.stcom.smartmealtable.infrastructure.dto.AddressRequest;
+import com.stcom.smartmealtable.service.BudgetService;
+import com.stcom.smartmealtable.service.MemberCategoryPreferenceService;
 import com.stcom.smartmealtable.service.MemberProfileService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +35,8 @@ public class MemberProfileController {
 
     private final MemberProfileService memberProfileService;
     private final AddressApiService addressApiService;
+    private final MemberCategoryPreferenceService memberCategoryPreferenceService;
+    private final BudgetService budgetService;
 
     @GetMapping("/me")
     public ApiResponse<?> getMemberProfilePageInfo(@UserContext MemberDto memberDto) {
@@ -53,13 +60,13 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @PostMapping("/addresses/{id}/primary")
+    @PostMapping("/me/addresses/{id}/primary")
     public ApiResponse<?> changePrimaryAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
         memberProfileService.changeAddressToPrimary(memberDto.getProfileId(), addressId);
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @PostMapping("/addresses")
+    @PostMapping("/me/addresses")
     public ApiResponse<?> registerAddress(@UserContext MemberDto memberDto, AddressCURequest request) {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
         memberProfileService.saveNewAddress(memberDto.getProfileId(), address, request.getAlias(),
@@ -67,7 +74,7 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @PatchMapping("/addresses/{id}")
+    @PatchMapping("/me/addresses/{id}")
     public ApiResponse<?> changeAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId,
                                         AddressCURequest request) {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
@@ -76,9 +83,51 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @DeleteMapping("/addresses/{id}")
+    @DeleteMapping("/me/addresses/{id}")
     public ApiResponse<?> deleteAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
         memberProfileService.deleteAddress(memberDto.getProfileId(), addressId);
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @GetMapping("/me/preferences")
+    public ApiResponse<?> getCategoryPreferences(@UserContext MemberDto memberDto) {
+        List<MemberCategoryPreference> preferences =
+                memberCategoryPreferenceService.getPreferences(memberDto.getProfileId());
+
+        List<CategoryPreferenceDto> liked = preferences.stream()
+                .filter(p -> p.getType() == PreferenceType.LIKE)
+                .map(p -> new CategoryPreferenceDto(
+                        p.getCategory().getId(),
+                        p.getCategory().getName(),
+                        p.getPriority()))
+                .toList();
+
+        List<CategoryPreferenceDto> disliked = preferences.stream()
+                .filter(p -> p.getType() == PreferenceType.DISLIKE)
+                .map(p -> new CategoryPreferenceDto(
+                        p.getCategory().getId(),
+                        p.getCategory().getName(),
+                        p.getPriority()))
+                .toList();
+
+        return ApiResponse.createSuccess(new PreferencesResponse(liked, disliked));
+    }
+
+    @PostMapping("/me/preferences")
+    public ApiResponse<?> saveCategoryPreferences(@UserContext MemberDto memberDto,
+                                                  @RequestBody PreferencesRequest request) {
+        memberCategoryPreferenceService.savePreferences(
+                memberDto.getProfileId(),
+                request.getLiked(),
+                request.getDisliked());
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @PostMapping("/me/budgets")
+    public ApiResponse<?> createDefaultBudgets(@UserContext MemberDto memberDto,
+                                               @RequestBody BudgetRequest budgetRequest) {
+        memberProfileService.registerDefaultBudgets(memberDto.getProfileId(), budgetRequest.getDailyLimit(),
+                budgetRequest.getMonthlyLimit());
         return ApiResponse.createSuccessWithNoContent();
     }
 
@@ -120,6 +169,35 @@ public class MemberProfileController {
         public AddressRequest toAddressApiRequest() {
             return new AddressRequest(roadAddress, alias, detailAddress);
         }
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class PreferencesRequest {
+        private List<Long> liked;
+        private List<Long> disliked;
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class PreferencesResponse {
+        private List<CategoryPreferenceDto> liked;
+        private List<CategoryPreferenceDto> disliked;
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class CategoryPreferenceDto {
+        private Long categoryId;
+        private String categoryName;
+        private Integer priority;
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class BudgetRequest {
+        private Long dailyLimit;
+        private Long monthlyLimit;
     }
 
 }
