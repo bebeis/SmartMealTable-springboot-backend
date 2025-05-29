@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -87,5 +88,11 @@ public class ExControllerAdvice {
     public ApiResponse<Object> exHandler(Exception e) {
         log.error("[Exception] ex", e);
         return ApiResponse.createError("서버 내부에서 체크 예외가 발생했습니다");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void handleNoResourceFound() {
+        // 오류, 로그 먹어버리기
     }
 }
