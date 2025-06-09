@@ -24,7 +24,7 @@ public class MemberCategoryPreferenceService {
     @Transactional
     public void savePreferences(Long profileId, List<Long> liked, List<Long> disliked) {
         MemberProfile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필입니다"));
 
         preferenceRepository.deleteByMemberProfile_Id(profileId);
 

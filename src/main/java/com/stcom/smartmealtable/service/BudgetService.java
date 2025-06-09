@@ -22,18 +22,18 @@ public class BudgetService {
 
     public DailyBudget findRecentDailyBudgetByMemberProfileId(Long memberProfileId) {
         return budgetRepository.findFirstDailyBudgetByMemberProfileId(memberProfileId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필로 접근"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필로 접근"));
     }
 
     public MonthlyBudget findRecentMonthlyBudgetByMemberProfileId(Long memberProfileId) {
         return budgetRepository.findFirstMonthlyBudgetByMemberProfileId(memberProfileId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필로 접근"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필로 접근"));
     }
 
     @Transactional
     public void saveMonthlyBudgetCustom(Long memberProfileId, Long limit) {
         MemberProfile profile = memberProfileRepository.findById(memberProfileId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필로 접근"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필로 접근"));
         MonthlyBudget monthlyBudget = new MonthlyBudget(profile, BigDecimal.valueOf(limit), YearMonth.now());
         budgetRepository.save(monthlyBudget);
     }
@@ -41,7 +41,7 @@ public class BudgetService {
     @Transactional
     public void saveDailyBudgetCustom(Long memberProfileId, Long limit) {
         MemberProfile profile = memberProfileRepository.findById(memberProfileId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 프로필로 접근"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필로 접근"));
         DailyBudget dailyBudget = new DailyBudget(profile, BigDecimal.valueOf(limit), LocalDate.now());
         budgetRepository.save(dailyBudget);
     }
