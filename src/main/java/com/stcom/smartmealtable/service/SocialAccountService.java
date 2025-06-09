@@ -39,7 +39,7 @@ public class SocialAccountService {
     @Transactional
     public void linkSocialAccount(TokenDto tokenDto) {
         Member member = memberRepository.findByEmail(tokenDto.getEmail())
-                .orElseThrow(() -> new IllegalStateException("회원이 null일 수는 없습니다"));
+                .orElseThrow(() -> new IllegalStateException("회원 엔티티가 존재하지 않은 상태로 소셜 계정 연결을 시도했습니다."));
 
         SocialAccount socialAccount = SocialAccount.builder()
                 .member(member)
@@ -65,7 +65,7 @@ public class SocialAccountService {
     public void updateToken(Long socialAccountId, String accessToken, String refreshToken,
                             LocalDateTime tokenExpiresAt) {
         SocialAccount socialAccount = socialAccountRepository.findById(socialAccountId)
-                .orElseThrow(() -> new IllegalStateException("확인되지 않은 계정입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("확인되지 않은 계정입니다"));
         socialAccount.updateToken(accessToken, refreshToken, tokenExpiresAt);
     }
 
