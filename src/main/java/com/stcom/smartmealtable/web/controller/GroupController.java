@@ -6,6 +6,7 @@ import com.stcom.smartmealtable.infrastructure.dto.AddressRequest;
 import com.stcom.smartmealtable.service.GroupService;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -90,7 +91,7 @@ public class GroupController {
         @NotEmpty
         private String name;
 
-        @NotEmpty
+        @NotNull
         private SchoolType type;
     }
 
@@ -107,7 +108,7 @@ public class GroupController {
         @NotEmpty
         private String name;
 
-        @NotEmpty
+        @NotNull
         private SchoolType type;
     }
 }
