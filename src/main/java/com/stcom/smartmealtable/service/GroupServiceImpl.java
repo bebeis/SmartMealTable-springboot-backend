@@ -43,8 +43,11 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void changeSchoolGroup(Long id, AddressRequest request, String name, SchoolType type) {
-        SchoolGroup group = (SchoolGroup) groupRepository.findById(id)
+        Group foundGroup = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
+        if (!(foundGroup instanceof SchoolGroup group)) {
+            throw new IllegalArgumentException("학교 그룹이 아닙니다");
+        }
         Address address = addressApiService.createAddressFromRequest(request);
         group.changeNameAndAddress(name, address);
         group.changeType(type);
