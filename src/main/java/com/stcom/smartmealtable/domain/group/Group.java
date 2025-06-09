@@ -32,6 +32,16 @@ public abstract class Group {
 
     private String name;
 
+    public Group(Address address, String name) {
+        this.address = address;
+        this.name = name;
+    }
+
     public abstract String getTypeName();
+
+    public void changeNameAndAddress(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
 
 }
