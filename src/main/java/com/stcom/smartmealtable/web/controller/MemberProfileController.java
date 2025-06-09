@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members/profile")
+@RequestMapping("/api/v1/members/profiles")
 public class MemberProfileController {
 
     private final MemberProfileService memberProfileService;
@@ -46,7 +46,7 @@ public class MemberProfileController {
 
     @PostMapping()
     public ApiResponse<Void> createMemberProfile(@UserContext MemberDto memberDto,
-                                              @Validated @RequestBody MemberProfileRequest request) {
+                                                 @Validated @RequestBody MemberProfileRequest request) {
         memberProfileService.createProfile(request.getNickName(), memberDto.getMemberId(), request.getMemberType(),
                 request.getGroupId());
         return ApiResponse.createSuccessWithNoContent();
@@ -54,20 +54,21 @@ public class MemberProfileController {
 
     @PatchMapping("/me")
     public ApiResponse<Void> changeMemberProfile(@UserContext MemberDto memberDto,
-                                              @Validated @RequestBody MemberProfileRequest request) {
+                                                 @Validated @RequestBody MemberProfileRequest request) {
         memberProfileService.changeProfile(memberDto.getProfileId(), request.getNickName(), request.getMemberType(),
                 request.getGroupId());
         return ApiResponse.createSuccessWithNoContent();
     }
 
     @PostMapping("/me/addresses/{id}/primary")
-    public ApiResponse<Void> changePrimaryAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId) {
+    public ApiResponse<Void> changePrimaryAddress(@UserContext MemberDto memberDto,
+                                                  @PathVariable("id") Long addressId) {
         memberProfileService.changeAddressToPrimary(memberDto.getProfileId(), addressId);
         return ApiResponse.createSuccessWithNoContent();
     }
 
     @PostMapping("/me/addresses")
-    public ApiResponse<Void> registerAddress(@UserContext MemberDto memberDto, AddressCURequest request) {
+    public ApiResponse<Void> registerAddress(@UserContext MemberDto memberDto, MemberAddressCURequest request) {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
         memberProfileService.saveNewAddress(memberDto.getProfileId(), address, request.getAlias(),
                 request.getAddressType());
@@ -76,7 +77,7 @@ public class MemberProfileController {
 
     @PatchMapping("/me/addresses/{id}")
     public ApiResponse<Void> changeAddress(@UserContext MemberDto memberDto, @PathVariable("id") Long addressId,
-                                        AddressCURequest request) {
+                                           MemberAddressCURequest request) {
         Address address = addressApiService.createAddressFromRequest(request.toAddressApiRequest());
         memberProfileService.changeAddress(memberDto.getProfileId(), addressId, address, request.getAlias(),
                 request.getAddressType());
@@ -115,7 +116,7 @@ public class MemberProfileController {
 
     @PostMapping("/me/preferences")
     public ApiResponse<Void> saveCategoryPreferences(@UserContext MemberDto memberDto,
-                                                  @RequestBody PreferencesRequest request) {
+                                                     @RequestBody PreferencesRequest request) {
         memberCategoryPreferenceService.savePreferences(
                 memberDto.getProfileId(),
                 request.getLiked(),
@@ -125,7 +126,7 @@ public class MemberProfileController {
 
     @PostMapping("/me/budgets")
     public ApiResponse<Void> createDefaultBudgets(@UserContext MemberDto memberDto,
-                                               @RequestBody BudgetRequest budgetRequest) {
+                                                  @RequestBody BudgetRequest budgetRequest) {
         memberProfileService.registerDefaultBudgets(memberDto.getProfileId(), budgetRequest.getDailyLimit(),
                 budgetRequest.getMonthlyLimit());
         return ApiResponse.createSuccessWithNoContent();
@@ -160,14 +161,14 @@ public class MemberProfileController {
 
     @AllArgsConstructor
     @Data
-    static class AddressCURequest {
+    static class MemberAddressCURequest {
         private String roadAddress;
         private AddressType addressType;
         private String alias;
         private String detailAddress;
 
         public AddressRequest toAddressApiRequest() {
-            return new AddressRequest(roadAddress, alias, detailAddress);
+            return new AddressRequest(roadAddress, detailAddress);
         }
     }
 
