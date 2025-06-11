@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -49,8 +48,8 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
-    public ApiResponse<JwtTokenResponseDto> createMember(@Valid @RequestBody CreateMemberRequest request,
-                                       BindingResult bindingResult) throws PasswordPolicyException {
+    public ApiResponse<JwtTokenResponseDto> createMember(@Valid @RequestBody CreateMemberRequest request)
+            throws PasswordPolicyException {
         memberService.validateDuplicatedEmail(request.getEmail());
         memberService.checkPasswordDoubly(request.getPassword(), request.getConfirmPassword());
 
@@ -67,8 +66,7 @@ public class MemberController {
     }
 
     @PatchMapping("/me")
-    public ApiResponse<Void> editMember(@UserContext MemberDto memberDto, @Valid @RequestBody EditMemberRequest request,
-                                     BindingResult bindingResult)
+    public ApiResponse<Void> editMember(@UserContext MemberDto memberDto, @Valid @RequestBody EditMemberRequest request)
             throws PasswordPolicyException, PasswordFailedExceededException {
         memberService.checkPasswordDoubly(request.getNewPassword(), request.getConfirmPassword());
         memberService.changePassword(memberDto.getMemberId(), request.getOriginPassword(), request.getNewPassword());
@@ -83,7 +81,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ApiResponse<Void> signUpWithTermAgreement(@UserContext MemberDto memberDto,
-                                                  @RequestBody List<TermAgreementDto> agreements) {
+                                                     @RequestBody List<TermAgreementDto> agreements) {
         termService.agreeTerms(
                 memberDto.getMemberId(),
                 agreements.stream()
