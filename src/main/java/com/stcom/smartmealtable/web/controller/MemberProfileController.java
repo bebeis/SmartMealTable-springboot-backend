@@ -180,29 +180,29 @@ public class MemberProfileController {
 
     @GetMapping("/me/budgets/monthly/{yearMonth}")
     public ApiResponse<MonthlyBudgetResponse> monthlyBudgetByDate(@UserContext MemberDto memberDto,
-                                                                  @PathVariable("yearMonth") @YearMonthFormat String yearMonth) {
+                                                                  @PathVariable("yearMonth") @YearMonthFormat YearMonth yearMonth) {
         MonthlyBudget monthlyBudget = budgetService.getMonthlyBudgetBy(memberDto.getProfileId(),
-                YearMonth.parse(yearMonth));
+                yearMonth);
 
         return ApiResponse.createSuccess(MonthlyBudgetResponse.of(monthlyBudget));
     }
 
     @PutMapping("/me/budgets/monthly/{yearMonth}/default")
     public ApiResponse<Void> registerDefaultMonthlyBudget(@UserContext MemberDto memberDto,
-                                                          @PathVariable("yearMonth") @YearMonthFormat String yearMonth,
+                                                          @PathVariable("yearMonth") @YearMonthFormat YearMonth yearMonth,
                                                           @RequestParam("limit") Long limit) {
         budgetService.registerDefaultMonthlyBudgetBy(memberDto.getProfileId(),
-                limit, YearMonth.parse(yearMonth));
+                limit, yearMonth);
 
         return ApiResponse.createSuccessWithNoContent();
     }
 
     @PatchMapping("/me/budgets/monthly/{yearMonth}")
     public ApiResponse<Void> editMonthlyBudget(@UserContext MemberDto memberDto,
-                                               @PathVariable("yearMonth") @YearMonthFormat String yearMonth,
+                                               @PathVariable("yearMonth") @YearMonthFormat YearMonth yearMonth,
                                                @RequestParam("limit") Long limit) {
         budgetService.editMonthlyBudgetCustom(memberDto.getProfileId(),
-                YearMonth.parse(yearMonth), limit);
+                yearMonth, limit);
 
         return ApiResponse.createSuccessWithNoContent();
     }
