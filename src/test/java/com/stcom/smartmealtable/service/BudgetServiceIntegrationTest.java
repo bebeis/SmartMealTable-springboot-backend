@@ -128,7 +128,7 @@ class BudgetServiceIntegrationTest {
     void getDailyBudgetsByWeek() {
         // given
         LocalDate monday = LocalDate.of(2025, 6, 9); // 월요일
-        
+
         // 월요일부터 일요일까지 일일 예산 생성
         for (int i = 0; i < 7; i++) {
             LocalDate date = monday.plusDays(i);
@@ -152,7 +152,7 @@ class BudgetServiceIntegrationTest {
         // given
         Long dailyLimit = 25000L;
         LocalDate startDate = LocalDate.of(2025, 6, 15); // 6월 15일부터
-        
+
         // when
         budgetService.registerDefaultDailyBudgetBy(memberProfile.getId(), dailyLimit, startDate);
 
@@ -160,7 +160,7 @@ class BudgetServiceIntegrationTest {
         // 6월 15일부터 6월 30일까지 16개의 일일 예산이 생성되어야 함
         List<DailyBudget> dailyBudgets = budgetRepository.findDailyBudgetsViaType(memberProfile.getId());
         assertThat(dailyBudgets).hasSize(16);
-        
+
         for (DailyBudget budget : dailyBudgets) {
             assertThat(budget.getLimit()).isEqualTo(BigDecimal.valueOf(dailyLimit));
             assertThat(budget.getDate()).isBetween(startDate, LocalDate.of(2025, 6, 30));
@@ -190,7 +190,7 @@ class BudgetServiceIntegrationTest {
         LocalDate targetDate = LocalDate.of(2025, 6, 20);
         DailyBudget dailyBudget = new DailyBudget(memberProfile, BigDecimal.valueOf(20000), targetDate);
         budgetRepository.save(dailyBudget);
-        
+
         Long newLimit = 35000L;
 
         // when
@@ -208,7 +208,7 @@ class BudgetServiceIntegrationTest {
         YearMonth targetYearMonth = YearMonth.of(2025, 8);
         MonthlyBudget monthlyBudget = new MonthlyBudget(memberProfile, BigDecimal.valueOf(600000), targetYearMonth);
         budgetRepository.save(monthlyBudget);
-        
+
         Long newLimit = 750000L;
 
         // when
@@ -229,7 +229,7 @@ class BudgetServiceIntegrationTest {
         // when & then
         assertThatThrownBy(() -> budgetService.getDailyBudgetBy(invalidProfileId, targetDate))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 프로필로 접근");
+                .hasMessage("예산이 존재하지 않습니다.");
     }
 
     @DisplayName("존재하지 않는 날짜의 예산을 조회하면 예외가 발생한다")
@@ -241,7 +241,7 @@ class BudgetServiceIntegrationTest {
         // when & then
         assertThatThrownBy(() -> budgetService.getDailyBudgetBy(memberProfile.getId(), nonExistentDate))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 프로필로 접근");
+                .hasMessage("예산이 존재하지 않습니다.");
     }
 
     @DisplayName("존재하지 않는 프로필 ID로 예산을 등록하면 예외가 발생한다")

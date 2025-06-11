@@ -44,7 +44,7 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
     @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :profileId and treat(b as MonthlyBudget).yearMonth = :yearMonth")
     Optional<MonthlyBudget> findMonthlyBudgetByMemberProfileIdAndYearMonth(Long profileId, YearMonth yearMonth);
 
-    @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :profileId and treat(b as DailyBudget).date between :startOfWeek and :endOfWeek")
+    @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :profileId and treat(b as DailyBudget).date between :startOfWeek and :endOfWeek order by treat(b as DailyBudget).date asc")
     List<DailyBudget> findDailyBudgetsByMemberProfileIdAndDateBetween(Long profileId, LocalDate startOfWeek,
                                                                       LocalDate endOfWeek);
 }
