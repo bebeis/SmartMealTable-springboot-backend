@@ -56,7 +56,7 @@ public class MemberProfile extends BaseTimeEntity {
                          Group group) {
         linkMember(member);
         this.nickName = nickName;
-        this.addressHistory = addressHistory;
+        this.addressHistory = (addressHistory == null) ? new java.util.ArrayList<>() : addressHistory;
         this.type = type;
         this.group = group;
     }
