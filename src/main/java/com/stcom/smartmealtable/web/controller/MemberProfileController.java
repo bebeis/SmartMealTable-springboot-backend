@@ -17,12 +17,15 @@ import com.stcom.smartmealtable.service.MemberProfileService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
+import com.stcom.smartmealtable.web.validation.YearMonthFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -140,14 +143,14 @@ public class MemberProfileController {
      */
     @GetMapping("/me/budgets/daily/{date}")
     public ApiResponse<DailyBudgetResponse> dailyBudgetByDate(@UserContext MemberDto memberDto,
-                                                              @PathVariable("date") String date) {
+                                                              @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date) {
         DailyBudget dailyBudget = budgetService.getDailyBudgetBy(memberDto.getProfileId(), LocalDate.parse(date));
         return ApiResponse.createSuccess(DailyBudgetResponse.of(dailyBudget));
     }
 
     @PutMapping("/me/budgets/daily/{date}/default")
     public ApiResponse<Void> registerDefaultDailyBudget(@UserContext MemberDto memberDto,
-                                                        @PathVariable("date") String date,
+                                                        @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date,
                                                         @RequestParam("limit") Long limit) {
         budgetService.registerDefaultDailyBudgetBy(memberDto.getProfileId(), limit, LocalDate.parse(date));
         return ApiResponse.createSuccessWithNoContent();
@@ -155,7 +158,7 @@ public class MemberProfileController {
 
     @PatchMapping("/me/budgets/daily/{date}")
     public ApiResponse<Void> editDailyBudget(@UserContext MemberDto memberDto,
-                                             @PathVariable("date") String date,
+                                             @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date,
                                              @RequestParam("limit") Long limit) {
         budgetService.editDailyBudgetCustom(memberDto.getProfileId(), LocalDate.parse(date), limit);
         return ApiResponse.createSuccessWithNoContent();
@@ -164,7 +167,7 @@ public class MemberProfileController {
     // 해당 일자가 속한 일일 예산 주간 데이터 조회
     @GetMapping("/me/budgets/daily/{date}/week")
     public ApiResponse<List<DailyBudgetResponse>> dailyBudgetWeekByDate(@UserContext MemberDto memberDto,
-                                                                        @PathVariable("date") String date) {
+                                                                        @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date) {
         List<DailyBudget> dailyBudgets = budgetService.getDailyBudgetsByWeek(memberDto.getProfileId(),
                 LocalDate.parse(date));
 
@@ -177,7 +180,7 @@ public class MemberProfileController {
 
     @GetMapping("/me/budgets/month/{yearMonth}")
     public ApiResponse<MonthlyBudgetResponse> monthlyBudgetByDate(@UserContext MemberDto memberDto,
-                                                                  @PathVariable("yearMonth") String yearMonth) {
+                                                                  @PathVariable("yearMonth") @YearMonthFormat String yearMonth) {
         MonthlyBudget monthlyBudget = budgetService.getMonthlyBudgetBy(memberDto.getProfileId(),
                 YearMonth.parse(yearMonth));
 
@@ -186,7 +189,7 @@ public class MemberProfileController {
 
     @PutMapping("/me/budgets/month/{yearMonth}/default")
     public ApiResponse<Void> registerDefaultMonthlyBudget(@UserContext MemberDto memberDto,
-                                                          @PathVariable("yearMonth") String yearMonth,
+                                                          @PathVariable("yearMonth") @YearMonthFormat String yearMonth,
                                                           @RequestParam("limit") Long limit) {
         budgetService.registerDefaultMonthlyBudgetBy(memberDto.getProfileId(),
                 limit, YearMonth.parse(yearMonth));
@@ -196,7 +199,7 @@ public class MemberProfileController {
 
     @PatchMapping("/me/budgets/monthly/{yearMonth}")
     public ApiResponse<Void> editMonthlyBudget(@UserContext MemberDto memberDto,
-                                               @PathVariable("yearMonth") String yearMonth,
+                                               @PathVariable("yearMonth") @YearMonthFormat String yearMonth,
                                                @RequestParam("limit") Long limit) {
         budgetService.editMonthlyBudgetCustom(memberDto.getProfileId(),
                 YearMonth.parse(yearMonth), limit);
