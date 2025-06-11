@@ -41,9 +41,9 @@ class BudgetServiceTest {
         Long memberProfileId = 1L;
         MemberProfile memberProfile = new MemberProfile();
         DailyBudget dailyBudget = new DailyBudget(memberProfile, BigDecimal.valueOf(10000), LocalDate.now());
-        
+
         when(budgetRepository.findFirstDailyBudgetByMemberProfileId(memberProfileId))
-            .thenReturn(Optional.of(dailyBudget));
+                .thenReturn(Optional.of(dailyBudget));
 
         // when
         DailyBudget result = budgetService.findRecentDailyBudgetByMemberProfileId(memberProfileId);
@@ -58,14 +58,14 @@ class BudgetServiceTest {
     void findRecentDailyBudgetByMemberProfileId_NotFound() {
         // given
         Long memberProfileId = 999L;
-        
+
         when(budgetRepository.findFirstDailyBudgetByMemberProfileId(memberProfileId))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> budgetService.findRecentDailyBudgetByMemberProfileId(memberProfileId))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessage("존재하지 않는 프로필로 접근");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 프로필로 접근");
     }
 
     @Test
@@ -75,9 +75,9 @@ class BudgetServiceTest {
         Long memberProfileId = 1L;
         MemberProfile memberProfile = new MemberProfile();
         MonthlyBudget monthlyBudget = new MonthlyBudget(memberProfile, BigDecimal.valueOf(300000), YearMonth.now());
-        
+
         when(budgetRepository.findFirstMonthlyBudgetByMemberProfileId(memberProfileId))
-            .thenReturn(Optional.of(monthlyBudget));
+                .thenReturn(Optional.of(monthlyBudget));
 
         // when
         MonthlyBudget result = budgetService.findRecentMonthlyBudgetByMemberProfileId(memberProfileId);
@@ -94,9 +94,9 @@ class BudgetServiceTest {
         Long memberProfileId = 1L;
         Long limit = 300000L;
         MemberProfile memberProfile = new MemberProfile();
-        
+
         when(memberProfileRepository.findById(memberProfileId))
-            .thenReturn(Optional.of(memberProfile));
+                .thenReturn(Optional.of(memberProfile));
 
         // when
         budgetService.saveMonthlyBudgetCustom(memberProfileId, limit);
@@ -112,9 +112,9 @@ class BudgetServiceTest {
         Long memberProfileId = 1L;
         Long limit = 10000L;
         MemberProfile memberProfile = new MemberProfile();
-        
+
         when(memberProfileRepository.findById(memberProfileId))
-            .thenReturn(Optional.of(memberProfile));
+                .thenReturn(Optional.of(memberProfile));
 
         // when
         budgetService.saveDailyBudgetCustom(memberProfileId, limit);
@@ -129,13 +129,14 @@ class BudgetServiceTest {
         // given
         Long memberProfileId = 999L;
         Long limit = 10000L;
-        
+
         when(memberProfileRepository.findById(memberProfileId))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> budgetService.saveDailyBudgetCustom(memberProfileId, limit))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessage("존재하지 않는 프로필로 접근");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 프로필로 접근");
     }
+    
 } 

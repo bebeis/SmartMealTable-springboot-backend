@@ -2,9 +2,11 @@ package com.stcom.smartmealtable.web;
 
 import com.stcom.smartmealtable.web.argumentresolver.UserContextArgumentResolver;
 import com.stcom.smartmealtable.web.interceptor.JwtAuthenticationInterceptor;
+import com.stcom.smartmealtable.web.validation.YearMonthAnnotationFormatterFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -20,6 +22,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userContextArgumentResolver);
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatterForFieldAnnotation(new YearMonthAnnotationFormatterFactory());
     }
 
     @Override
