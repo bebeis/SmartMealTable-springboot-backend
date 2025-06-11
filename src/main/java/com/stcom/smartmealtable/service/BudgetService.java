@@ -52,7 +52,7 @@ public class BudgetService {
 
     public DailyBudget getDailyBudgetBy(Long profileId, LocalDate date) {
         return budgetRepository.findDailyBudgetByMemberProfileIdAndDate(profileId, date).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 프로필로 접근")
+                new IllegalArgumentException("예산이 존재하지 않습니다.")
         );
     }
 

@@ -18,8 +18,9 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
     List<DailyBudget> findDailyBudgetsViaType(@Param("memberProfileId") Long memberProfileId);
 
     @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :memberProfileId order by treat(b as DailyBudget).date desc")
-    List<DailyBudget> findFirstDailyBudgetByMemberProfileIdList(@Param("memberProfileId") Long memberProfileId, Pageable pageable);
-    
+    List<DailyBudget> findFirstDailyBudgetByMemberProfileIdList(@Param("memberProfileId") Long memberProfileId,
+                                                                Pageable pageable);
+
     default Optional<DailyBudget> findFirstDailyBudgetByMemberProfileId(Long memberProfileId) {
         List<DailyBudget> results = findFirstDailyBudgetByMemberProfileIdList(memberProfileId, Pageable.ofSize(1));
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
@@ -29,8 +30,9 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
     List<MonthlyBudget> findMonthlyBudgetsViaType(@Param("memberProfileId") Long memberProfileId);
 
     @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :memberProfileId order by treat(b as MonthlyBudget).yearMonth desc")
-    List<MonthlyBudget> findFirstMonthlyBudgetByMemberProfileIdList(@Param("memberProfileId") Long memberProfileId, Pageable pageable);
-    
+    List<MonthlyBudget> findFirstMonthlyBudgetByMemberProfileIdList(@Param("memberProfileId") Long memberProfileId,
+                                                                    Pageable pageable);
+
     default Optional<MonthlyBudget> findFirstMonthlyBudgetByMemberProfileId(Long memberProfileId) {
         List<MonthlyBudget> results = findFirstMonthlyBudgetByMemberProfileIdList(memberProfileId, Pageable.ofSize(1));
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
@@ -38,9 +40,6 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
     @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :profileId and treat(b as DailyBudget).date = :date")
     Optional<DailyBudget> findDailyBudgetByMemberProfileIdAndDate(Long profileId, LocalDate date);
-
-    @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :profileId and treat(b as MonthlyBudget).yearMonth = :date")
-    Optional<MonthlyBudget> findMonthlyBudgetByMemberProfileIdAndDate(Long profileId, LocalDate date);
 
     @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :profileId and treat(b as MonthlyBudget).yearMonth = :yearMonth")
     Optional<MonthlyBudget> findMonthlyBudgetByMemberProfileIdAndYearMonth(Long profileId, YearMonth yearMonth);

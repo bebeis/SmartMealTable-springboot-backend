@@ -68,6 +68,9 @@ public abstract class Budget extends BaseTimeEntity {
     }
 
     public void changeLimit(BigDecimal limit) {
+        if (limit == null || limit.signum() < 0) {
+            throw new IllegalArgumentException("예산 한도는 0 이상이어야 합니다.");
+        }
         this.limit = limit;
     }
 }
