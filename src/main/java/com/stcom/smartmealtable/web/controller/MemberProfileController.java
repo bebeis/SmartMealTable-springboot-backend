@@ -178,7 +178,7 @@ public class MemberProfileController {
         return ApiResponse.createSuccess(responses);
     }
 
-    @GetMapping("/me/budgets/month/{yearMonth}")
+    @GetMapping("/me/budgets/monthly/{yearMonth}")
     public ApiResponse<MonthlyBudgetResponse> monthlyBudgetByDate(@UserContext MemberDto memberDto,
                                                                   @PathVariable("yearMonth") @YearMonthFormat String yearMonth) {
         MonthlyBudget monthlyBudget = budgetService.getMonthlyBudgetBy(memberDto.getProfileId(),
@@ -187,7 +187,7 @@ public class MemberProfileController {
         return ApiResponse.createSuccess(MonthlyBudgetResponse.of(monthlyBudget));
     }
 
-    @PutMapping("/me/budgets/month/{yearMonth}/default")
+    @PutMapping("/me/budgets/monthly/{yearMonth}/default")
     public ApiResponse<Void> registerDefaultMonthlyBudget(@UserContext MemberDto memberDto,
                                                           @PathVariable("yearMonth") @YearMonthFormat String yearMonth,
                                                           @RequestParam("limit") Long limit) {
