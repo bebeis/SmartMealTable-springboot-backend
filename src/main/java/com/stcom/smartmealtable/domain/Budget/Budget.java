@@ -66,4 +66,8 @@ public abstract class Budget extends BaseTimeEntity {
     public boolean isOverLimit() {
         return spendAmount.compareTo(limit) > 0;
     }
+
+    public void changeLimit(BigDecimal limit) {
+        this.limit = limit;
+    }
 }

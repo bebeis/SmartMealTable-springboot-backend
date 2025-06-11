@@ -2,6 +2,9 @@ package com.stcom.smartmealtable.web.controller;
 
 import com.stcom.smartmealtable.domain.Address.Address;
 import com.stcom.smartmealtable.domain.Address.AddressType;
+import com.stcom.smartmealtable.domain.Budget.Budget;
+import com.stcom.smartmealtable.domain.Budget.DailyBudget;
+import com.stcom.smartmealtable.domain.Budget.MonthlyBudget;
 import com.stcom.smartmealtable.domain.food.MemberCategoryPreference;
 import com.stcom.smartmealtable.domain.food.PreferenceType;
 import com.stcom.smartmealtable.domain.member.MemberProfile;
@@ -14,6 +17,8 @@ import com.stcom.smartmealtable.service.MemberProfileService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +29,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -124,13 +131,79 @@ public class MemberProfileController {
         return ApiResponse.createSuccessWithNoContent();
     }
 
-    @PostMapping("/me/budgets")
-    public ApiResponse<Void> createDefaultBudgets(@UserContext MemberDto memberDto,
-                                                  @RequestBody BudgetRequest budgetRequest) {
-        memberProfileService.registerDefaultBudgets(memberDto.getProfileId(), budgetRequest.getDailyLimit(),
-                budgetRequest.getMonthlyLimit());
+    /**
+     * 일별 예산 조회
+     *
+     * @param memberDto
+     * @param date      (ISO_LOCAL_DATE 형식, 예: 2025-06-01)
+     * @return
+     */
+    @GetMapping("/me/budgets/daily/{date}")
+    public ApiResponse<DailyBudgetResponse> dailyBudgetByDate(@UserContext MemberDto memberDto,
+                                                              @PathVariable("date") String date) {
+        DailyBudget dailyBudget = budgetService.getDailyBudgetBy(memberDto.getProfileId(), LocalDate.parse(date));
+        return ApiResponse.createSuccess(DailyBudgetResponse.of(dailyBudget));
+    }
+
+    @PutMapping("/me/budgets/daily/{date}/default")
+    public ApiResponse<Void> registerDefaultDailyBudget(@UserContext MemberDto memberDto,
+                                                        @PathVariable("date") String date,
+                                                        @RequestParam("limit") Long limit) {
+        budgetService.registerDefaultDailyBudgetBy(memberDto.getProfileId(), limit, LocalDate.parse(date));
         return ApiResponse.createSuccessWithNoContent();
     }
+
+    @PatchMapping("/me/budgets/daily/{date}")
+    public ApiResponse<Void> editDailyBudget(@UserContext MemberDto memberDto,
+                                             @PathVariable("date") String date,
+                                             @RequestParam("limit") Long limit) {
+        budgetService.editDailyBudgetCustom(memberDto.getProfileId(), LocalDate.parse(date), limit);
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    // 해당 일자가 속한 일일 예산 주간 데이터 조회
+    @GetMapping("/me/budgets/daily/{date}/week")
+    public ApiResponse<List<DailyBudgetResponse>> dailyBudgetWeekByDate(@UserContext MemberDto memberDto,
+                                                                        @PathVariable("date") String date) {
+        List<DailyBudget> dailyBudgets = budgetService.getDailyBudgetsByWeek(memberDto.getProfileId(),
+                LocalDate.parse(date));
+
+        List<DailyBudgetResponse> responses = dailyBudgets.stream()
+                .map(DailyBudgetResponse::of)
+                .toList();
+
+        return ApiResponse.createSuccess(responses);
+    }
+
+    @GetMapping("/me/budgets/month/{yearMonth}")
+    public ApiResponse<MonthlyBudgetResponse> monthlyBudgetByDate(@UserContext MemberDto memberDto,
+                                                                  @PathVariable("yearMonth") String yearMonth) {
+        MonthlyBudget monthlyBudget = budgetService.getMonthlyBudgetBy(memberDto.getProfileId(),
+                YearMonth.parse(yearMonth));
+
+        return ApiResponse.createSuccess(MonthlyBudgetResponse.of(monthlyBudget));
+    }
+
+    @PutMapping("/me/budgets/month/{yearMonth}/default")
+    public ApiResponse<Void> registerDefaultMonthlyBudget(@UserContext MemberDto memberDto,
+                                                          @PathVariable("yearMonth") String yearMonth,
+                                                          @RequestParam("limit") Long limit) {
+        budgetService.registerDefaultMonthlyBudgetBy(memberDto.getProfileId(),
+                limit, YearMonth.parse(yearMonth));
+
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @PatchMapping("/me/budgets/monthly/{yearMonth}")
+    public ApiResponse<Void> editMonthlyBudget(@UserContext MemberDto memberDto,
+                                               @PathVariable("yearMonth") String yearMonth,
+                                               @RequestParam("limit") Long limit) {
+        budgetService.editMonthlyBudgetCustom(memberDto.getProfileId(),
+                YearMonth.parse(yearMonth), limit);
+
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
 
     @AllArgsConstructor
     @Data
@@ -196,9 +269,34 @@ public class MemberProfileController {
 
     @AllArgsConstructor
     @Data
-    static class BudgetRequest {
-        private Long dailyLimit;
-        private Long monthlyLimit;
+    static class DailyBudgetResponse {
+        private Long dailySpentAmount;
+        private Long dailyLimitAmount;
+        private Long dailyAvailableAmount;
+
+        public static DailyBudgetResponse of(Budget dailyBudget) {
+            return new DailyBudgetResponse(
+                    dailyBudget.getSpendAmount().longValue(),
+                    dailyBudget.getLimit().longValue(),
+                    dailyBudget.getAvailableAmount().longValue()
+            );
+        }
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class MonthlyBudgetResponse {
+        private Long monthlySpentAmount;
+        private Long monthlyLimitAmount;
+        private Long monthlyAvailableAmount;
+
+        public static MonthlyBudgetResponse of(Budget monthlyBudget) {
+            return new MonthlyBudgetResponse(
+                    monthlyBudget.getSpendAmount().longValue(),
+                    monthlyBudget.getLimit().longValue(),
+                    monthlyBudget.getAvailableAmount().longValue()
+            );
+        }
     }
 
 }

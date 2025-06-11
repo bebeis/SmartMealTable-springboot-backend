@@ -3,6 +3,8 @@ package com.stcom.smartmealtable.repository;
 import com.stcom.smartmealtable.domain.Budget.Budget;
 import com.stcom.smartmealtable.domain.Budget.DailyBudget;
 import com.stcom.smartmealtable.domain.Budget.MonthlyBudget;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +24,17 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
     @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :memberProfileId order by treat(b as MonthlyBudget).yearMonth desc")
     Optional<MonthlyBudget> findFirstMonthlyBudgetByMemberProfileId(@Param("memberProfileId") Long memberProfileId);
+
+    @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :profileId and treat(b as DailyBudget).date = :date")
+    Optional<DailyBudget> findDailyBudgetByMemberProfileIdAndDate(Long profileId, LocalDate date);
+
+    @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :profileId and treat(b as MonthlyBudget).yearMonth = :date")
+    Optional<MonthlyBudget> findMonthlyBudgetByMemberProfileIdAndDate(Long profileId, LocalDate date);
+
+    @Query("select b from Budget b where type(b) = MonthlyBudget and b.memberProfile.id = :profileId and treat(b as MonthlyBudget).yearMonth = :yearMonth")
+    Optional<MonthlyBudget> findMonthlyBudgetByMemberProfileIdAndYearMonth(Long profileId, YearMonth yearMonth);
+
+    @Query("select b from Budget b where type(b) = DailyBudget and b.memberProfile.id = :profileId and treat(b as DailyBudget).date between :startOfWeek and :endOfWeek")
+    List<DailyBudget> findDailyBudgetsByMemberProfileIdAndDateBetween(Long profileId, LocalDate startOfWeek,
+                                                                      LocalDate endOfWeek);
 }
