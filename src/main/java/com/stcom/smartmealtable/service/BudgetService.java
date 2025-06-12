@@ -105,4 +105,9 @@ public class BudgetService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필로 접근"))
                 .changeLimit(BigDecimal.valueOf(limit));
     }
+
+    public List<MonthlyBudget> getMonthlyBudgetsBy(Long profileId, LocalDate parse, int count) {
+        return budgetRepository.findMonthlyBudgetsByMemberProfileIdAndYearMonthBefore(
+                profileId, YearMonth.from(parse)).stream().limit(count).toList();
+    }
 }

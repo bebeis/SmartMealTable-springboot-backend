@@ -8,16 +8,21 @@ import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import com.stcom.smartmealtable.web.validation.YearMonthFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,16 +34,16 @@ public class MemberBudgetController {
     // 일별 예산 조회
     @GetMapping("/daily/{date}")
     public ApiResponse<DailyBudgetResponse> dailyBudgetByDate(@UserContext MemberDto memberDto,
-                                                              @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date) {
-        DailyBudget dailyBudget = budgetService.getDailyBudgetBy(memberDto.getProfileId(), LocalDate.parse(date));
+                                                              @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
+        DailyBudget dailyBudget = budgetService.getDailyBudgetBy(memberDto.getProfileId(), date);
         return ApiResponse.createSuccess(DailyBudgetResponse.of(dailyBudget));
     }
 
     @PutMapping("/daily/{date}/default")
     public ApiResponse<Void> registerDefaultDailyBudget(@UserContext MemberDto memberDto,
-                                                        @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date,
+                                                        @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date,
                                                         @RequestParam("limit") Long limit) {
-        budgetService.registerDefaultDailyBudgetBy(memberDto.getProfileId(), limit, LocalDate.parse(date));
+        budgetService.registerDefaultDailyBudgetBy(memberDto.getProfileId(), limit, date);
         return ApiResponse.createSuccessWithNoContent();
     }
 
@@ -53,12 +58,26 @@ public class MemberBudgetController {
     // 해당 일자가 속한 일일 예산 주간 데이터 조회
     @GetMapping("/daily/{date}/week")
     public ApiResponse<List<DailyBudgetResponse>> dailyBudgetWeekByDate(@UserContext MemberDto memberDto,
-                                                                        @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) String date) {
+                                                                        @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
         List<DailyBudget> dailyBudgets = budgetService.getDailyBudgetsByWeek(memberDto.getProfileId(),
-                LocalDate.parse(date));
+                date);
 
         List<DailyBudgetResponse> responses = dailyBudgets.stream()
                 .map(DailyBudgetResponse::of)
+                .toList();
+
+        return ApiResponse.createSuccess(responses);
+    }
+
+    // 해당 일자가 속한 달을 포함하여, 이전 6개월 조회
+    @GetMapping("/montly")
+    public ApiResponse<List<MonthlyBudgetResponse>> monthlyBudgetsByDate(@UserContext MemberDto memberDto,
+                                                                         @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
+        List<MonthlyBudget> monthlyBudgets = budgetService.getMonthlyBudgetsBy(memberDto.getProfileId(),
+                date, 6);
+
+        List<MonthlyBudgetResponse> responses = monthlyBudgets.stream()
+                .map(MonthlyBudgetResponse::of)
                 .toList();
 
         return ApiResponse.createSuccess(responses);
