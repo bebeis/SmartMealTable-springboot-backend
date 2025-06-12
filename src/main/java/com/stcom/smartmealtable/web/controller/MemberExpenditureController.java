@@ -8,6 +8,8 @@ import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,7 +38,7 @@ public class MemberExpenditureController {
     private final ExpenditureService expenditureService;
     private final CreditMessageManager creditMessageManager;
 
-    @GetMapping("/messages/parse")
+    @PostMapping("/messages/parse")
     public ApiResponse<ExpenditureDto> parseCreditMessage(@RequestBody ParseRequest request) {
         return ApiResponse.createSuccess(creditMessageManager.parseMessage(request.getMessage()));
     }
@@ -51,7 +54,7 @@ public class MemberExpenditureController {
 
     @PostMapping
     public ApiResponse<Void> registerExpenditure(@UserContext MemberDto memberDto,
-                                                 @RequestBody ExpenditureRequest request) {
+                                                 @RequestBody @Validated ExpenditureRequest request) {
         expenditureService.registerExpenditure(
                 memberDto.getProfileId(),
                 request.getSpentDate(),
@@ -63,7 +66,7 @@ public class MemberExpenditureController {
 
     @PatchMapping("/{id}")
     public ApiResponse<Void> editExpenditure(@UserContext MemberDto memberDto, @PathVariable("id") Long expenditureId,
-                                             @RequestBody ExpenditureRequest request) {
+                                             @RequestBody @Validated ExpenditureRequest request) {
         expenditureService.editExpenditure(
                 memberDto.getProfileId(),
                 expenditureId,
@@ -91,9 +94,16 @@ public class MemberExpenditureController {
 
     @Data
     static class ExpenditureRequest {
+
         @DateTimeFormat(iso = ISO.DATE_TIME)
+        @NotNull
         private LocalDateTime spentDate;
+
+        @NotNull
+        @Positive
         private Long amount;
+
+        @NotEmpty
         private String tradeName;
     }
 

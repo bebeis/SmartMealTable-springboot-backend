@@ -64,6 +64,11 @@ public class ExpenditureService {
                                 String tradeName) {
         Expenditure expenditure = expenditureRepository.findById(expenditureId)
                 .orElseThrow(() -> new IllegalArgumentException("지출 내역이 존재하지 않습니다."));
+
+        if (!expenditure.getDailyBudget().getMemberProfile().getId().equals(profileId)) {
+            throw new IllegalArgumentException("해당 지출 내역 등록자와 접근자가 다릅니다.");
+        }
+        
         expenditure.edit(spentDate, amount, tradeName);
     }
 
@@ -74,6 +79,10 @@ public class ExpenditureService {
 
         DailyBudget dailyBudget = expenditure.getDailyBudget();
         MonthlyBudget monthlyBudget = expenditure.getMonthlyBudget();
+
+        if (!dailyBudget.getMemberProfile().getId().equals(profileId)) {
+            throw new IllegalArgumentException("해당 지출 내역 등록자와 접근자가 다릅니다.");
+        }
 
         BigDecimal spent = BigDecimal.valueOf(expenditure.getAmount());
         dailyBudget.subtractSpent(spent);
