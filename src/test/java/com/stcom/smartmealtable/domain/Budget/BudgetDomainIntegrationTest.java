@@ -136,7 +136,7 @@ class BudgetDomainIntegrationTest {
         BigDecimal usageRate = budget.getSpendAmount()
                 .multiply(BigDecimal.valueOf(100))
                 .divide(budget.getLimit(), 2, RoundingMode.HALF_UP);
-        assertThat(usageRate).isEqualTo(BigDecimal.ZERO);
+        assertThat(usageRate.stripTrailingZeros()).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @DisplayName("예산의 부동소수점 정밀도 테스트")

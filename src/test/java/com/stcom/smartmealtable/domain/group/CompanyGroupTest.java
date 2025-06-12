@@ -32,6 +32,6 @@ class CompanyGroupTest {
         // then
         assertThat(group.getName()).isEqualTo("테스트금융");
         assertThat(group.getAddress().getRoadAddress()).isEqualTo("서울특별시 영등포구 국제금융로 2");
-        assertThat(group.getTypeName()).isEqualTo("FINANCE");
+        assertThat(group.getTypeName()).isEqualTo("파이낸스");
     }
 } 

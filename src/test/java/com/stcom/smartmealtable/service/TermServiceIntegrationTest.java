@@ -13,12 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 통합 테스트: 스프링 컨텍스트와 실제 JPA 구현체로 Service 계층 검증.
  */
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 class TermServiceIntegrationTest {
 
