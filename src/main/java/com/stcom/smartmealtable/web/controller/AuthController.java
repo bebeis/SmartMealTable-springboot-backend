@@ -12,6 +12,7 @@ import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -87,10 +88,14 @@ public class AuthController {
     @Data
     @AllArgsConstructor
     public static class SignUpRequest {
-        @Email
+        @Email(message = "유효한 이메일 형식이 아닙니다")
+        @NotEmpty(message = "이메일은 비어있을 수 없습니다")
         private String email;
+        @NotEmpty(message = "비밀번호는 비어있을 수 없습니다")
         private String password;
+        @NotEmpty(message = "비밀번호 확인은 비어있을 수 없습니다")
         private String confirmPassword;
+        @NotEmpty(message = "이름은 비어있을 수 없습니다")
         private String fullName;
     }
 

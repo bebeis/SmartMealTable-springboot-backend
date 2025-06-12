@@ -11,6 +11,7 @@ import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Objects;
@@ -38,7 +39,7 @@ public class AuthTokenController {
     private final SocialAuthService socialAuthService;
 
     @PostMapping("/login")
-    public ApiResponse<JwtTokenResponseDto> login(@RequestBody EmailLoginRequest request) {
+    public ApiResponse<JwtTokenResponseDto> login(@Valid @RequestBody EmailLoginRequest request) {
         AuthResultDto authResultDto = loginService.loginWithEmail(request.getEmail(), request.getPassword());
         JwtTokenResponseDto jwtDto = jwtTokenService.createTokenDto(authResultDto.getMemberId(),
                 authResultDto.getProfileId());
@@ -58,7 +59,7 @@ public class AuthTokenController {
     }
 
     @PostMapping("/oauth2/code")
-    public ApiResponse<JwtTokenResponseDto> socialLogin(@RequestBody SocialLoginRequest request) {
+    public ApiResponse<JwtTokenResponseDto> socialLogin(@Valid @RequestBody SocialLoginRequest request) {
         TokenDto token = socialAuthService.getTokenResponse(request.getProvider().toLowerCase(),
                 request.getAuthorizationCode());
         AuthResultDto authResultDto = loginService.socialLogin(token);
@@ -72,7 +73,7 @@ public class AuthTokenController {
 
     @PostMapping("/token/refresh")
     public ApiResponse<AccessTokenRefreshResponse> refreshAccessToken(@UserContext MemberDto memberDto,
-                                                                      @RequestBody RefreshTokenRequest request) {
+                                                                      @Valid @RequestBody RefreshTokenRequest request) {
         String accessToken = jwtTokenService.createAccessToken(memberDto.getMemberId(), memberDto.getProfileId());
         return ApiResponse.createSuccess(new AccessTokenRefreshResponse(accessToken, 3600, "Bearer"));
     }
@@ -80,25 +81,25 @@ public class AuthTokenController {
     @Data
     @AllArgsConstructor
     public static class EmailLoginRequest {
-        @NotEmpty
-        @Email
+        @NotEmpty(message = "이메일은 비어있을 수 없습니다")
+        @Email(message = "유효한 이메일 형식이 아닙니다")
         private String email;
-        @NotEmpty
+        @NotEmpty(message = "비밀번호는 비어있을 수 없습니다")
         private String password;
     }
 
     @Data
     @AllArgsConstructor
     public static class SocialLoginRequest {
-        @NotEmpty
+        @NotEmpty(message = "Provider는 비어있을 수 없습니다")
         private String provider;
-        @NotEmpty
+        @NotEmpty(message = "인증 코드는 비어있을 수 없습니다")
         private String authorizationCode;
     }
 
     @Data
     public static class RefreshTokenRequest {
-        @NotEmpty
+        @NotEmpty(message = "리프레시 토큰은 비어있을 수 없습니다")
         private String refreshToken;
     }
 

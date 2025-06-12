@@ -6,6 +6,7 @@ import com.stcom.smartmealtable.service.MemberProfileService;
 import com.stcom.smartmealtable.service.dto.MemberDto;
 import com.stcom.smartmealtable.web.argumentresolver.UserContext;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,7 @@ public class MemberProfileController {
     @AllArgsConstructor
     @Data
     static class MemberProfileRequest {
+        @NotEmpty(message = "닉네임은 비어있을 수 없습니다")
         private String nickName;
         private Long groupId;
         private MemberType memberType;
