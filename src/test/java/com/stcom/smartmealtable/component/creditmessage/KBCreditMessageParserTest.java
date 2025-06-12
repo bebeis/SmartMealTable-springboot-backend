@@ -38,7 +38,8 @@ class KBCreditMessageParserTest {
         ExpenditureDto expenditure = parser.parse(kbMessage);
         // then
         assertThat(expenditure.getVendor()).isEqualTo("KB");
-        assertThat(expenditure.getDateTime()).isEqualTo(LocalDateTime.of(LocalDateTime.now().getYear(), 7, 16, 12, 28));
+        assertThat(expenditure.getSpentDate()).isEqualTo(
+                LocalDateTime.of(LocalDateTime.now().getYear(), 7, 16, 12, 28));
         assertThat(expenditure.getAmount()).isEqualTo(11000);
         assertThat(expenditure.getTradeName()).isEqualTo("롯데시네마 평촌");
 

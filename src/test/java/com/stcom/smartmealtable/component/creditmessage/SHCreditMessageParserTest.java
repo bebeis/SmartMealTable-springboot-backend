@@ -38,7 +38,8 @@ class SHCreditMessageParserTest {
         ExpenditureDto expenditure = parser.parse(shMessage);
         // then
         assertThat(expenditure.getVendor()).isEqualTo("SH");
-        assertThat(expenditure.getDateTime()).isEqualTo(LocalDateTime.of(LocalDateTime.now().getYear(), 10, 21, 8, 33));
+        assertThat(expenditure.getSpentDate()).isEqualTo(
+                LocalDateTime.of(LocalDateTime.now().getYear(), 10, 21, 8, 33));
         assertThat(expenditure.getAmount()).isEqualTo(5700);
         assertThat(expenditure.getTradeName()).isEqualTo("(주)티머니 개인택");
 

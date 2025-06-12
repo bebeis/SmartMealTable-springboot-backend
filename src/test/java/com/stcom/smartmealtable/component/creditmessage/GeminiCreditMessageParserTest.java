@@ -49,7 +49,7 @@ class GeminiCreditMessageParserTest {
                 () -> assertEquals("KB", dto.getVendor()),
                 () -> assertEquals(11000L, dto.getAmount()),
                 () -> assertEquals("스타벅스", dto.getTradeName()),
-                () -> assertEquals("2025-06-12T10:20", dto.getDateTime().toString().substring(0, 16))
+                () -> assertEquals("2025-06-12T10:20", dto.getSpentDate().toString().substring(0, 16))
         );
     }
 }
