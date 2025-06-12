@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -55,8 +56,9 @@ public class Expenditure extends BaseTimeEntity {
     }
 
     private void updateAmount(Long originAmount, Long afterAmount) {
-        dailyBudget.addSpent(afterAmount - originAmount);
-        monthlyBudget.addSpent(afterAmount - originAmount);
+        Long difference = afterAmount - originAmount;
+        dailyBudget.addSpent(BigDecimal.valueOf(difference));
+        monthlyBudget.addSpent(BigDecimal.valueOf(difference));
         this.amount = afterAmount;
     }
 
