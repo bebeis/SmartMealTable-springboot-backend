@@ -24,4 +24,5 @@ public class MonthlyBudget extends Budget {
     @Convert(converter = YearMonthConverter.class)
     @Column(name = "budget_year_month")
     private YearMonth yearMonth;
+    
 }
