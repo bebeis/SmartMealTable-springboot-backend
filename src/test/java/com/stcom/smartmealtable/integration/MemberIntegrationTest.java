@@ -50,7 +50,7 @@ class MemberIntegrationTest {
         request.put("fullName", fullName);
 
         // when & then
-        mockMvc.perform(post("/api/v1/members")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
