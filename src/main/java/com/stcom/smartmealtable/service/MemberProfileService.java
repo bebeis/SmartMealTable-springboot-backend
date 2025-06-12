@@ -11,7 +11,6 @@ import com.stcom.smartmealtable.repository.AddressEntityRepository;
 import com.stcom.smartmealtable.repository.GroupRepository;
 import com.stcom.smartmealtable.repository.MemberProfileRepository;
 import com.stcom.smartmealtable.repository.MemberRepository;
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,12 +102,5 @@ public class MemberProfileService {
         AddressEntity addressEntity = addressEntityRepository.findById(addressEntityId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 주소 정보입니다."));
         profile.removeAddress(addressEntity);
-    }
-
-    @Transactional
-    public void registerDefaultBudgets(Long profileId, Long dailyLimit, Long monthlyLimit) {
-        MemberProfile profile = memberProfileRepository.findById(profileId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필입니다"));
-        profile.registerDefaultBudgets(BigDecimal.valueOf(dailyLimit), BigDecimal.valueOf(monthlyLimit));
     }
 }

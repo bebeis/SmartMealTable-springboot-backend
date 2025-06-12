@@ -15,6 +15,6 @@ public interface MemberProfileRepository extends JpaRepository<MemberProfile, Lo
 
     void deleteMemberProfileByMember(Member member);
 
-    @EntityGraph(attributePaths = {"member", "addressHistory, group"})
+    @EntityGraph(attributePaths = {"member", "addressHistory", "group"})
     Optional<MemberProfile> findMemberProfileEntityGraphById(Long id);
 }

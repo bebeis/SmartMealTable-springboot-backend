@@ -18,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -52,19 +51,12 @@ public class MemberProfile extends BaseTimeEntity {
     @JoinColumn(name = "affiliation_id")
     private Group group;
 
-    @Column(name = "default_monthly_limit")
-    private BigDecimal defaultMonthlyLimit;
-
-    @Column(name = "default_daily_limit")
-    private BigDecimal defaultDailyLimit;
-
-
     @Builder
     public MemberProfile(Member member, String nickName, List<AddressEntity> addressHistory, MemberType type,
                          Group group) {
         linkMember(member);
         this.nickName = nickName;
-        this.addressHistory = addressHistory;
+        this.addressHistory = (addressHistory == null) ? new java.util.ArrayList<>() : addressHistory;
         this.type = type;
         this.group = group;
     }
@@ -134,8 +126,4 @@ public class MemberProfile extends BaseTimeEntity {
         this.group = newGroup;
     }
 
-    public void registerDefaultBudgets(BigDecimal defaultDailyLimit, BigDecimal defaultMonthlyLimit) {
-        this.defaultDailyLimit = defaultDailyLimit;
-        this.defaultMonthlyLimit = defaultMonthlyLimit;
-    }
 }

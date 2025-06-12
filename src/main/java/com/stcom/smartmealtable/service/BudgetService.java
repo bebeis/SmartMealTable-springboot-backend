@@ -10,6 +10,7 @@ import com.stcom.smartmealtable.repository.MemberProfileRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,10 +62,11 @@ public class BudgetService {
         MemberProfile profile = memberProfileRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필로 접근"));
         // 일일 예산은 오늘 ~ 이번달 말일까지 디폴트 daily Limit로 여러 개 생성해준다.
+        List<DailyBudget> budgets = new ArrayList<>();
         for (LocalDate date = startDate; date.getMonth() == startDate.getMonth(); date = date.plusDays(1)) {
-            DailyBudget dailyBudget = new DailyBudget(profile, BigDecimal.valueOf(dailyLimit), date);
-            budgetRepository.save(dailyBudget);
+            budgets.add(new DailyBudget(profile, BigDecimal.valueOf(dailyLimit), date));
         }
+        budgetRepository.saveAll(budgets);
     }
 
     @Transactional
