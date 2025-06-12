@@ -11,7 +11,7 @@ import lombok.ToString;
 public class ExpenditureDto {
 
     private String vendor;
-    private LocalDateTime dateTime;
+    private LocalDateTime spentDate;
     private Long amount;
     private String tradeName;
 
