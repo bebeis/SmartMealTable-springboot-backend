@@ -116,4 +116,26 @@ class MemberBudgetControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("SUCCESS"));
     }
+
+    @Test
+    @DisplayName("GET /montly - 이전 6개월 월별 예산 조회")
+    void monthlyBudgetsPreviousMonths() throws Exception {
+        MonthlyBudget mb1 = Mockito.mock(MonthlyBudget.class);
+        when(mb1.getSpendAmount()).thenReturn(BigDecimal.valueOf(1000));
+        when(mb1.getLimit()).thenReturn(BigDecimal.valueOf(10000));
+        when(mb1.getAvailableAmount()).thenReturn(BigDecimal.valueOf(9000));
+        
+        MonthlyBudget mb2 = Mockito.mock(MonthlyBudget.class);
+        when(mb2.getSpendAmount()).thenReturn(BigDecimal.valueOf(2000));
+        when(mb2.getLimit()).thenReturn(BigDecimal.valueOf(15000));
+        when(mb2.getAvailableAmount()).thenReturn(BigDecimal.valueOf(13000));
+        
+        when(budgetService.getMonthlyBudgetsBy(anyLong(), any(LocalDate.class), anyInt())).thenReturn(List.of(mb1, mb2));
+
+        mockMvc.perform(get("/api/v1/members/me/budgets/montly/2025-06-12"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(2));
+    }
 } 

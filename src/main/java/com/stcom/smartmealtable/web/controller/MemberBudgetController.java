@@ -70,7 +70,7 @@ public class MemberBudgetController {
     }
 
     // 해당 일자가 속한 달을 포함하여, 이전 6개월 조회
-    @GetMapping("/montly")
+    @GetMapping("/montly/{date}")
     public ApiResponse<List<MonthlyBudgetResponse>> monthlyBudgetsByDate(@UserContext MemberDto memberDto,
                                                                          @PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
         List<MonthlyBudget> monthlyBudgets = budgetService.getMonthlyBudgetsBy(memberDto.getProfileId(),
