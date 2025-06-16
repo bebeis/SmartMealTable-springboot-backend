@@ -21,4 +21,5 @@ public class DailyBudget extends Budget {
 
     @Column(name = "daily_budget_date")
     private LocalDate date;
+    
 }

@@ -38,6 +38,7 @@ public abstract class Budget extends BaseTimeEntity {
     @Column(name = "budget_limit")
     private BigDecimal limit;
 
+
     protected Budget(MemberProfile memberProfile, BigDecimal limit) {
         this.memberProfile = memberProfile;
         this.limit = limit;
@@ -65,5 +66,16 @@ public abstract class Budget extends BaseTimeEntity {
 
     public boolean isOverLimit() {
         return spendAmount.compareTo(limit) > 0;
+    }
+
+    public void changeLimit(BigDecimal limit) {
+        if (limit == null || limit.signum() < 0) {
+            throw new IllegalArgumentException("예산 한도는 0 이상이어야 합니다.");
+        }
+        this.limit = limit;
+    }
+
+    public void subtractSpent(BigDecimal spent) {
+        this.spendAmount = this.spendAmount.subtract(spent);
     }
 }

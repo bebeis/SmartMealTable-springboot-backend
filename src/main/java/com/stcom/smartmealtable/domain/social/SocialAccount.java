@@ -31,6 +31,7 @@ public class SocialAccount extends BaseTimeEntity {
 
     private String provider;
 
+    @Column(unique = true)
     private String providerUserId;
 
     private String tokenType;

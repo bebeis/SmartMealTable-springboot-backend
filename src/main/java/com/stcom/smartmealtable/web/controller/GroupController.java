@@ -3,11 +3,12 @@ package com.stcom.smartmealtable.web.controller;
 import com.stcom.smartmealtable.domain.group.Group;
 import com.stcom.smartmealtable.service.GroupService;
 import com.stcom.smartmealtable.web.dto.ApiResponse;
+import com.stcom.smartmealtable.web.dto.group.GroupDto;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,17 +31,9 @@ public class GroupController {
                 .toList());
     }
 
-    @Data
-    @AllArgsConstructor
-    static class GroupDto {
-        private String roadAddress;
-        private String name;
-        private String groupType;
-
-        public GroupDto(Group group) {
-            this.groupType = group.getTypeName();
-            this.name = group.getName();
-            this.roadAddress = group.getAddress().getRoadAddress();
-        }
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> deleteGroup(@PathVariable("id") Long id) {
+        groupService.deleteGroup(id);
+        return ApiResponse.createSuccessWithNoContent();
     }
 }

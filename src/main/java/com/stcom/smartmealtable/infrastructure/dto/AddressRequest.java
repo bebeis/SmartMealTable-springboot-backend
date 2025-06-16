@@ -9,7 +9,5 @@ public class AddressRequest {
 
     private String roadAddress;
 
-    private String alias;
-
     private String detailAddress;
 }
